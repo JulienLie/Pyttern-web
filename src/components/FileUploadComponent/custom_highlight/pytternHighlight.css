@@ -1,0 +1,8 @@
+.wildcard {
+color: darkorange;
+font-weight: bold;
+}
+
+.cm-highlight-range {
+    background-color: rgba(255, 255, 0, 0.4);
+}

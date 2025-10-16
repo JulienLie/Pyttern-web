@@ -22,11 +22,31 @@ interface CytoscapeTreeData {
 
 interface Transition {
     q: number;
-    a: string;
-    A: string;
+    alpha: ("B" | "I")[];
+    A: TransitionsCondition;
     t: string[];
     q_prime: number;
-    alpha: string;
+    beta: ("B" | "I")[];
+}
+
+interface TransitionsCondition {
+    type: string
+}
+
+interface NodeTransition extends TransitionsCondition{
+    name: string,
+    down: number,
+    up: number
+}
+
+interface NamedTransition extends TransitionsCondition {
+    name: string
+}
+
+interface CallTransition extends TransitionsCondition {
+    macro_name: string,
+    transformation_name: string,
+    args: string[]
 }
 
 interface CytoscapeGraphData {
@@ -182,6 +202,43 @@ function recursive_generation(node: CytoscapeTreeData, cy: cytoscape.Core) {
     return new_elem
 }
 
+
+// format transition.A (a discriminated condition object) into a readable input label
+function formatCondition(cond: TransitionsCondition | undefined): string {
+    if (!cond) return "ε"
+    let label = "ε"
+    switch (cond.type) {
+        case "NodeTransition":
+            // NodeTransition shape: use its name
+            const nodeCond = cond as NodeTransition
+            if(nodeCond.name.length > 0){
+                label = nodeCond.name
+            }
+            if(nodeCond.down != 1 || nodeCond.up != 1){
+                label += `/${nodeCond.down},${nodeCond.up}`
+            }
+            break
+        case "NamedTransition":
+            const namedCond = cond as NamedTransition
+            if(namedCond.name.length > 0)
+                label = namedCond.name
+            break
+        case "CallTransition":
+            console.log("Call condition")
+            console.log(cond)
+            const callCond = cond as CallTransition
+            label = `(${callCond.macro_name}.${callCond.transformation_name}; ${(callCond.args || []).join(",")})`
+            break
+        default:
+            // fallback: if it's actually a string at runtime, try to clean it, otherwise unknown
+            const anyCond: any = cond
+            if (typeof anyCond === "string") 
+                label = anyCond.replace("Context", "")
+            break
+    }
+    return label.replace("Context", "")
+}
+
 function generatePatternGraph(data: CytoscapeGraphData, cy: cytoscape.Core) {
     for(const state of data.states){
         cy.add({
@@ -193,10 +250,15 @@ function generatePatternGraph(data: CytoscapeGraphData, cy: cytoscape.Core) {
     for(const state in data.transitions){
         const transitions = data.transitions[state]
         for(const transition of transitions){
-            const pop = transition.A.length === 0 ? "ε" : `'${transition.A}'`
-            const input = transition.a.length === 0 ? "ε" : transition.a.replace("Context", "")
-            const push = transition.alpha.length === 0 ? "ε" : `'${transition.alpha}'`
-            const label = `${pop}, ${input} -> ${push}`
+            // pop from stack (alpha) — use the alpha string
+            const pop = transition.alpha.length === 0 ? "ε" : `'${transition.alpha}'`
+            const inputLabel = formatCondition(transition.A)
+            const movements = (transition.t || []).join(",")
+                                    .replace("LEFT_CHILD", "LC")
+                                    .replace("RIGHT_SIBLING", "RS")
+                                    .replace(/PARENT/g, "P")
+            const push = transition.beta.length === 0 ? "ε" : `'${transition.beta}'`
+            const label = `${pop}, ${inputLabel}, [${movements}] -> ${push}`
             const elem = cy.add({
                 group: 'edges',
                 data: { source: transition.q.toString(), target: transition.q_prime.toString(), label: label}

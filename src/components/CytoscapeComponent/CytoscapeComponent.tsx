@@ -34,6 +34,15 @@ const CytoscapeComponent: React.FC<CytoscapeComponentsProps> = ({name, code, gri
         })
     });
 
+    window.addEventListener('resize', function(_) {
+        if(!grid) return
+        for(let gridItem of grid.getGridItems()){
+            if(!gridItem) continue
+            if (gridItem instanceof HTMLElement)
+                resize(gridItem)
+        }
+    }, true);
+
     function resize(item: GridItemHTMLElement) {
         if (item.contains(gridRefDiv.current)) {
             const div = cyRef.current

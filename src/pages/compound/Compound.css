@@ -1,0 +1,120 @@
+.compound-container {
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    padding-bottom: 120px; /* Space for fixed bottom container */
+    position: relative;
+    overflow: hidden;
+}
+
+.compound-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 200px;
+    z-index: 0;
+}
+
+.compound-content {
+    display: flex;
+    flex: 1;
+    gap: 30px;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+.compound-left,
+.compound-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    animation: slideInFromSide 0.5s ease-out;
+}
+
+@keyframes slideInFromSide {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.compound-left {
+    animation-delay: 0.1s;
+    opacity: 0;
+    animation-fill-mode: forwards;
+}
+
+.compound-right {
+    animation-delay: 0.2s;
+    opacity: 0;
+    animation-fill-mode: forwards;
+}
+
+.compound-divider {
+    width: 4px;
+    background: linear-gradient(to bottom, 
+        #3b82f6 0%, 
+        #8b5cf6 50%, 
+        #3b82f6 100%);
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+    position: relative;
+}
+
+.run-button-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.517);
+    padding: 20px 40px;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    z-index: 1000;
+    border-top: 2px solid #e5e7eb;
+}
+
+.btn-run {
+    padding: 16px 40px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 24px rgba(16, 185, 129, 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.5px;
+}
+
+.btn-run:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    transform: translateY(-3px) scale(1.05);
+}
+
+.btn-run:active {
+    transform: translateY(-1px) scale(1.02);
+}
+
+.play-icon {
+    font-size: 16px;
+}
+
+.btn-run:hover .play-icon {
+    animation: none;
+    transform: scale(1.2);
+}

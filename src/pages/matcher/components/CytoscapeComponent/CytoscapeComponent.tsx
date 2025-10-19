@@ -3,13 +3,14 @@ import 'bootstrap/dist/css/bootstrap.css';
 import {GridItemHTMLElement, GridStack, GridStackNode} from "gridstack";
 import {CytoscapeType, generateCytoscape} from "./CytoscapeComponent.helper.ts";
 import {Core} from "cytoscape";
-import { MatchState, State } from "../../pages/Matcher.tsx";
+import { MatchState } from "../../../../store/slices/matcherSlice";
+import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
+import { fetchGraphData } from "../../../../services/matcher/matcherService";
 
 interface CytoscapeComponentsProps {
     name: string,
     code?: string,
     grid?: GridStack,
-    state: State,
 }
 
 interface CytoscapeOption {
@@ -17,7 +18,14 @@ interface CytoscapeOption {
     label: string;
 }
 
-const CytoscapeComponent: React.FC<CytoscapeComponentsProps> = ({name, code, grid, state}) => {
+const CytoscapeComponent: React.FC<CytoscapeComponentsProps> = ({name, code, grid}) => {
+    const dispatch = useAppDispatch();
+    
+    // Get match state and graph data from Redux
+    const matchState = useAppSelector((state) => state.matcher.matchState);
+    const graphData = useAppSelector((state) => 
+        name === "pattern" ? state.matcher.patternGraph : state.matcher.codeGraph
+    );
     const follow_name = "follow_" + name;
     const cy_name = name + "-cy";
 
@@ -103,57 +111,41 @@ const CytoscapeComponent: React.FC<CytoscapeComponentsProps> = ({name, code, gri
         }
     }, [cys]);
 
-    // POST request to the server when the `code` changes
+    // Fetch graph data when code changes
     useEffect(() => {
         if (code) {
-            fetch('/api/' + name, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({code}), // Send the code as JSON
-            })
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then((data) => {
-                    if (data.status === "error") {
-                        throw new Error(data.message);
-                    }
-                    return data;
-                })
-                .then((data) => {
-                    const new_cys = [];
-                    for (const element in data.graph) {
-                        const type: CytoscapeType = CytoscapeType[element as keyof typeof CytoscapeType];
-                        const cy = generateCytoscape(type, data.graph[element]);
-                        new_cys.push({
-                            cy,
-                            label: element
-                        });
-                    }
-                    setCys(new_cys);
-                })
-                .catch((error) => {
-                    console.error("Error sending code to the server:", error);
-                });
+            const type = name === "pattern" ? "pattern" : "code";
+            dispatch(fetchGraphData({ code, type }));
         }
-    }, [code, name]);
+    }, [code, name, dispatch]);
+
+    // Generate Cytoscape instances from graph data
+    useEffect(() => {
+        if (!graphData) return;
+
+        const new_cys = [];
+        for (const element in graphData) {
+            const type: CytoscapeType = CytoscapeType[element as keyof typeof CytoscapeType];
+            const cy = generateCytoscape(type, graphData[element]);
+            new_cys.push({
+                cy,
+                label: element
+            });
+        }
+        setCys(new_cys);
+    }, [graphData]);
 
     useEffect(() => {
-        const node: string = state.currentState[name + "Node" as keyof MatchState];
+        const node: string = matchState.currentState[name + "Node" as keyof MatchState];
         for (const cy of cys) {
             const cytoscape = cy.cy;
             cytoscape.nodes().style({'background-color': '#BBB'});
 
-            for(const node of state.prevMatchedNodes){
+            for(const node of matchState.prevMatchedNodes){
                 cytoscape.nodes(`[id = "${node[name + "Node" as keyof MatchState]}"]`).style({'background-color': '#ff0000'});
             }
 
-            for(const node of state.matchedNodes){
+            for(const node of matchState.matchedNodes){
                 cytoscape.nodes(`[id = "${node[name + "Node" as keyof MatchState]}"]`).style({'background-color': '#008'});
             }
 
@@ -166,7 +158,7 @@ const CytoscapeComponent: React.FC<CytoscapeComponentsProps> = ({name, code, gri
                 if(anim.play) anim.play()
             }
         }
-    }, [state, name, cys, state.prevMatchedNodes, state.matchedNodes]);
+    }, [matchState, name, cys, matchState.prevMatchedNodes, matchState.matchedNodes]);
 
     const changeGraph: ChangeEventHandler<HTMLSelectElement> = (event) => {
         for (const cy of cys) {

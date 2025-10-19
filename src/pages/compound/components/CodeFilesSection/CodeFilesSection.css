@@ -1,0 +1,210 @@
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.section-header h2 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+}
+
+.section-header .header-icon {
+    font-size: 24px;
+    color: #3b82f6;
+}
+
+.file-count {
+    font-size: 14px;
+    color: #6b7280;
+    background-color: #f3f4f6;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.section-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-add,
+.btn-reset {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-add {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.btn-add:hover {
+    background-color: #2563eb;
+}
+
+.btn-reset {
+    background-color: #ef4444;
+    color: white;
+}
+
+.btn-reset:hover {
+    background-color: #dc2626;
+}
+
+.file-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    background-color: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 16px;
+    border-bottom: 1px solid #e5e7eb;
+    transition: all 0.2s ease;
+    animation: slideIn 0.3s ease-out;
+}
+
+.file-item:last-child {
+    border-bottom: none;
+}
+
+.file-item:hover {
+    background-color: #f9fafb;
+    transform: translateX(4px);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.file-chevron {
+    color: #9ca3af;
+    font-size: 12px;
+    transition: transform 0.2s ease;
+}
+
+.file-item:hover .file-chevron {
+    transform: translateX(3px);
+    color: #3b82f6;
+}
+
+.file-icon {
+    font-size: 18px;
+    color: #3b82f6;
+}
+
+.file-name {
+    font-size: 16px;
+    font-weight: 500;
+    color: #1f2937;
+    flex: 0 0 auto;
+    min-width: 100px;
+}
+
+.file-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #059669;
+    font-size: 14px;
+    flex: 1;
+}
+
+.status-icon {
+    color: #10b981;
+    font-size: 14px;
+    margin-right: 4px;
+}
+
+.btn-delete {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 6px 10px;
+    color: #ef4444;
+    transition: all 0.2s ease;
+    border-radius: 6px;
+    opacity: 0.6;
+}
+
+.btn-delete:hover {
+    opacity: 1;
+    background-color: #fee2e2;
+    transform: scale(1.1);
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    color: #6b7280;
+}
+
+.empty-icon {
+    font-size: 64px;
+    color: #d1d5db;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.empty-state p {
+    margin: 0 0 20px 0;
+    font-size: 16px;
+    color: #9ca3af;
+}
+
+.btn-add-empty {
+    padding: 12px 24px;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-add-empty:hover {
+    background-color: #2563eb;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+

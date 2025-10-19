@@ -202,7 +202,6 @@ function recursive_generation(node: CytoscapeTreeData, cy: cytoscape.Core) {
     return new_elem
 }
 
-
 // format transition.A (a discriminated condition object) into a readable input label
 function formatCondition(cond: TransitionsCondition | undefined): string {
     if (!cond) return "ε"
@@ -250,15 +249,15 @@ function generatePatternGraph(data: CytoscapeGraphData, cy: cytoscape.Core) {
     for(const state in data.transitions){
         const transitions = data.transitions[state]
         for(const transition of transitions){
-            // pop from stack (alpha) — use the alpha string
-            const pop = transition.alpha.length === 0 ? "ε" : `'${transition.alpha}'`
-            const inputLabel = formatCondition(transition.A)
-            const movements = (transition.t || []).join(",")
-                                    .replace("LEFT_CHILD", "LC")
-                                    .replace("RIGHT_SIBLING", "RS")
-                                    .replace(/PARENT/g, "P")
-            const push = transition.beta.length === 0 ? "ε" : `'${transition.beta}'`
-            const label = `${pop}, ${inputLabel}, [${movements}] -> ${push}`
+             // pop from stack (alpha) — use the alpha string
+             const pop = transition.alpha.length === 0 ? "ε" : `'${transition.alpha}'`
+             const inputLabel = formatCondition(transition.A)
+             const movements = (transition.t || []).join(",")
+                                     .replace("LEFT_CHILD", "LC")
+                                     .replace("RIGHT_SIBLING", "RS")
+                                     .replace(/PARENT/g, "P")
+             const push = transition.beta.length === 0 ? "ε" : `'${transition.beta}'`
+             const label = `${pop}, ${inputLabel}, [${movements}] -> ${push}`
             const elem = cy.add({
                 group: 'edges',
                 data: { source: transition.q.toString(), target: transition.q_prime.toString(), label: label}

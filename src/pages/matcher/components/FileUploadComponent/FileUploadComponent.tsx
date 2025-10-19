@@ -5,60 +5,52 @@ import './custom_highlight/pytternHighlight.css'
 import CodeMirror, { Compartment, EditorView } from "@uiw/react-codemirror";
 import { pytternExtension } from "./custom_highlight/pytternSyntaxHighlighter";
 import { highlightRange } from "./custom_highlight/highlightRange";
+import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
+import { setPatternCode, setCode as setCodeAction } from "../../../../store/slices/matcherSlice";
+import { validateCode } from "../../../../services/matcher/matcherService";
 
 interface FileUploadProps {
     name: string;
-    onCodeChange?: (code: string) => void;
     pos: [number, number];
 }
 
 const highlightCompartment = new Compartment();
 
-const FileUploadComponent: React.FC<FileUploadProps> = ({ name, onCodeChange, pos }) => {
-    const [code, setCode] = useState<string>(""); // State for the code content
-    const [errortxt, setErrortxt] = useState<string>("");
+const FileUploadComponent: React.FC<FileUploadProps> = ({ name, pos }) => {
+    const dispatch = useAppDispatch();
+    
+    // Get the code and validation errors from Redux
+    const reduxCode = useAppSelector((state) => 
+        name === "pattern" ? state.matcher.patternCode : state.matcher.code
+    );
+    
+    const validationError = useAppSelector((state) => 
+        name === "pattern" ? state.matcher.validationErrors.pattern : state.matcher.validationErrors.code
+    );
+    
+    const [localCode, setLocalCode] = useState<string>(reduxCode);
     const [lang, setLang] = useState<string>("");
 
-    const timeoutRef = useRef<number | null>(null);
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
     const editorRef = useRef<EditorView | null>(null);
 
+    // Sync local state with Redux state
     useEffect(() => {
-        if(code === "") return
-        fetch('/api/validate', {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ code: code, lang: lang}), // Send the code as JSON
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then((data) => {
-                if(data.status === "ok"){
-                    setErrortxt("")
-                    if (onCodeChange) onCodeChange(code)
-                    return
-                }
+        setLocalCode(reduxCode);
+    }, [reduxCode]);
 
-                const infos = data.message
-                if (typeof infos === "string") {
-                    setErrortxt(infos)
-                    return
-                }
-                else{
-                    setErrortxt(`Error at line ${infos.line}:${infos.column} - ${infos.msg}`)
-                }
-            })
-    }, [code, onCodeChange, lang]);
+    // Validate code using Redux thunk
+    useEffect(() => {
+        if(localCode === "") return;
+        
+        const type = name === "pattern" ? "pattern" : "code";
+        dispatch(validateCode({ code: localCode, lang, type }));
+    }, [localCode, dispatch, name, lang]);
 
     const handleCodeChange = (value: any) => {
         if(timeoutRef.current) clearTimeout(timeoutRef.current)
         timeoutRef.current = setTimeout(() => {
-            setCode(value)
+            setLocalCode(value)
         }, 500)
     }
 
@@ -72,7 +64,7 @@ const FileUploadComponent: React.FC<FileUploadProps> = ({ name, onCodeChange, po
             const reader = new FileReader();
             reader.onload = (e) => {
                 const content = e.target?.result as string;
-                setCode(content); // Update the code state with file content
+                setLocalCode(content); // Update the local code state with file content
             };
             reader.onerror = () => {
                 alert("Failed to read the file. Please try again.");
@@ -84,15 +76,23 @@ const FileUploadComponent: React.FC<FileUploadProps> = ({ name, onCodeChange, po
 
     useEffect(() => {
         if (editorRef.current) {
-            editorRef.current.dispatch({
+            editorRef.current!.dispatch({
                 effects: highlightCompartment.reconfigure(highlightRange(pos[0], pos[1])),
             });
         }
       }, [pos]);
 
-    console.log(pos)
+    const is_disabled = !localCode;
 
-    const is_disabled = !code;
+    const handleClear = (e: React.FormEvent) => {
+        e.preventDefault();
+        setLocalCode("");
+        if (name === "pattern") {
+            dispatch(setPatternCode(""));   
+        } else {
+            dispatch(setCodeAction(""));
+        }
+    };
 
     return (
         <div className="form-floating">
@@ -110,12 +110,12 @@ const FileUploadComponent: React.FC<FileUploadProps> = ({ name, onCodeChange, po
                 </div>
             </form>
             <div className="row m-1">
-                <p style={{color: "red"}}>{errortxt}</p>
+                <p style={{color: "red"}}>{validationError}</p>
                 <label htmlFor={name} style={{ height: "fit-content" }}>
                     {name}
                 </label>
                 <CodeMirror 
-                    value={code}
+                    value={localCode}
                     onChange={handleCodeChange}
                     placeholder={name}
                     extensions={[pytternExtension, highlightCompartment.of(highlightRange(pos[0], pos[1]))]}
@@ -124,7 +124,7 @@ const FileUploadComponent: React.FC<FileUploadProps> = ({ name, onCodeChange, po
             </div>
             <form
                 className="row p-4 mw-25"
-                onSubmit={() => setCode("")}
+                onSubmit={handleClear}
             >
                 <input
                     type="submit"

@@ -1,9 +1,9 @@
 import { Routes, Route } from 'react-router-dom';
-import Layout from './components/Layout';
+import Layout from './navbar/Layout';
 import { lazy, Suspense } from 'react';
+import Compound from './pages/compound/Compound';
 
-const Matcher = lazy(() => import('./pages/Matcher'));
-const Macros = lazy(() => import('./pages/Macros'));
+const Matcher = lazy(() => import('./pages/matcher/Matcher'));
 
 function App() {
   return (
@@ -11,7 +11,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Matcher />} />
-          <Route path="macros" element={<Macros />} />
+          <Route path='compound' element={<Compound />} />
         </Route>
       </Routes>
     </Suspense>

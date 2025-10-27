@@ -1,18 +1,7 @@
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 4px;
-}
-
 .section-header h2 {
     font-size: 28px;
     font-weight: 600;
     color: #1f2937;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 0;
 }
 
 .section-header .header-icon {
@@ -30,11 +19,6 @@
     border: 1px solid #d8b4fe;
 }
 
-.section-actions {
-    display: flex;
-    gap: 12px;
-}
-
 .btn-add,
 .btn-reset {
     padding: 10px 20px;
@@ -44,9 +28,6 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 6px;
 }
 
 .btn-add {
@@ -68,17 +49,7 @@
 }
 
 .pattern-empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 20px;
-    text-align: center;
     color: #6b7280;
-    background-color: #ffffff;
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .pattern-empty-state .empty-icon {
@@ -89,7 +60,6 @@
 }
 
 .pattern-empty-state p {
-    margin: 0 0 20px 0;
     font-size: 16px;
     color: #9ca3af;
 }
@@ -104,9 +74,6 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
 }
 
 .btn-import-empty:hover {

@@ -11,7 +11,7 @@ interface PatternTreeProps {
 function PatternTree({ pattern }: PatternTreeProps) {
     // Helper function to check if an element is a pattern file (leaf node)
     const isPatternFile = (element: CompoundPatternElement): element is PatternFile => {
-        return 'pattern' in element;
+        return 'code' in element;
     };
 
     // Helper function to check if a node is a logical operator (and, or, not)
@@ -27,7 +27,7 @@ function PatternTree({ pattern }: PatternTreeProps) {
                 <div key={element.id} className="tree-leaf">
                     <span className="branch-line"></span>
                     <FontAwesomeIcon icon={faFile} className="leaf-icon" />
-                    <span className="leaf-text">{element.name}</span>
+                    <span className="leaf-text">{element.filename}</span>
                 </div>
             );
         } else {
@@ -38,7 +38,7 @@ function PatternTree({ pattern }: PatternTreeProps) {
                 <div key={element.name} className="tree-branch">
                     <span className="branch-line"></span>
                     <span 
-                        className={`node-text ${isOperator ? `keyword keyword-${element.name.toLowerCase()}` : ''}`}
+                        className={`node-text d-inline-flex align-items-center gap-2 ${isOperator ? `keyword keyword-${element.name.toLowerCase()}` : ''}`}
                     >
                         {element.name}
                     </span>
@@ -53,10 +53,10 @@ function PatternTree({ pattern }: PatternTreeProps) {
     };
 
     return (
-        <div className="pattern-tree-container">
+        <div className="pattern-tree-container bg-white rounded-3 border p-4 shadow-sm">
             <div className="pattern-tree">
                 <div className="tree-node root-node">
-                    <span className="node-text root">
+                    <span className="node-text root d-inline-flex align-items-center gap-2">
                         <FontAwesomeIcon icon={faFolder} className="pattern-icon" />
                         {pattern.name}
                     </span>

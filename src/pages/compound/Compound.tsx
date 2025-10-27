@@ -1,99 +1,94 @@
-import { useState } from 'react';
 import './Compound.css';
 import CodeFilesSection from './components/CodeFilesSection/CodeFilesSection';
 import CompoundPatternSection from './components/CompoundPatternSection/CompoundPatternSection';
-import { CodeFile, CompoundPattern } from '../../store/slices/compoundSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay } from '@fortawesome/free-solid-svg-icons';
+import { importCompoundPatternFromFolder, validateCompoundPattern, importCodeFiles } from './import.helper';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { setCompoundPattern, setCodeFiles, FileStatus } from '../../store/slices/compoundSlice';
+import { validateCodeFiles } from '../../services/compound/compoundService';
 
 function Compound() {
-    let mockCodeFiles: CodeFile[] = [
-        { id: '1', name: 'code1.py', status: 'ready', code: 'def foo(): print("Hello, world!")' },
-        { id: '2', name: 'code2.py', status: 'ready', code: 'def foo(): print("Hello, world!")' },
-        { id: '3', name: 'code3.py', status: 'ready', code: 'def foo(): print("Hello, world!")' },
-        { id: '4', name: 'code4.py', status: 'ready', code: 'def foo(): print("Hello, world!")' },
-        { id: '5', name: 'code5.py', status: 'ready', code: 'def foo(): print("Hello, world!")' },
-    ];
 
-    let mockCompoundPattern: CompoundPattern = {
-        name: 'pattern_name',
-        children: [
-            {
-                id: '1',
-                name: 'and',
-                children: [
-                    {
-                        id: '2',
-                        name: 'pattern1.py',
-                        pattern: 'def foo(?*):?*',
-                        isSelected: false,
-                    },
-                    {
-                        id: '3',
-                        name: 'pattern2.py',
-                        pattern: 'def foo(?*):?*',
-                        isSelected: false,
-                    },
-                    {
-                        id: '4',
-                        name: 'or',
-                        children: [
-                            {
-                                id: '5',
-                                name: 'not',
-                                children: [
-                                    {
-                                        id: '6',
-                                        name: 'pattern3.py',
-                                        pattern: 'def foo(?*):?*',
-                                        isSelected: false,
-                                    },
-                                ],
-                            },
-                            {
-                                id: '7',
-                                name: 'pattern4.py',
-                                pattern: 'def foo(?*):?*',
-                                isSelected: false,
-                            },
-                            {
-                                id: '7',
-                                name: 'pattern5.py',
-                                pattern: 'def foo(?*):?*',
-                                isSelected: false,
-                            }
-                        ],
+    const dispatch = useAppDispatch();
+    const { codeFiles, compoundPattern, isFilesReadyToMatch } = useAppSelector((state) => state.compound);
+
+
+    const handleAddCode = async () => {
+        try {
+            console.log('Add code - opening file picker');
+            const newFiles = await importCodeFiles(codeFiles[0]?.lang || undefined);
+            
+            if (newFiles.length > 0) {
+                // Merge with existing files, avoiding duplicates by name
+                const existingNames = new Set();
+
+                
+                const codeFilesToValidate = codeFiles.map((file) => {
+                    existingNames.add(file.filename);
+
+                    if (newFiles.some(f => f.filename === file.filename)) {
+                        return {
+                            ...file,
+                            status: FileStatus.PENDING,
+                        };
+                    } else {
+                        return file;
                     }
-                ],
-            },
-        ],
-    };
+                });
 
-    const [codeFiles, setCodeFiles] = useState<CodeFile[]>([]);
+                
 
-    const [compoundPattern, setCompoundPattern] = useState<CompoundPattern | null>(null);
-
-    const handleAddCode = () => {
-        console.log('Add code');
-        setCodeFiles(mockCodeFiles);
+                const uniqueNewFiles = newFiles.filter(f => !existingNames.has(f.filename));
+                
+                dispatch(setCodeFiles([...codeFilesToValidate, ...uniqueNewFiles]));
+                dispatch(validateCodeFiles());
+            } else {
+                console.log('No files selected');
+            }
+        } catch (error) {
+            console.error('Error importing code files:', error);
+            alert(`Error importing code files: ${(error as Error).message}`);
+        }
     };
 
     const handleResetCode = () => {
-        setCodeFiles([]);
+        dispatch(setCodeFiles([]));
     };
 
-    const handleDeleteFile = (id: string) => {
-        setCodeFiles(codeFiles.filter(file => file.id !== id));
+    const handleDeleteFile = (filename: string) => {
+        dispatch(setCodeFiles(codeFiles.filter(file => file.filename !== filename)));
     };
 
-    const handleImportPattern = () => {
-        console.log('Import pattern');
-        setCompoundPattern(mockCompoundPattern);
+    const handleImportPattern = async () => {
+        try {
+            console.log('Import pattern - opening folder picker');
+            const pattern = await importCompoundPatternFromFolder();
+            
+            if (pattern) {
+                // Validate the imported pattern
+                const validationError = validateCompoundPattern(pattern);
+                
+                if (validationError) {
+                    console.error('Validation error:', validationError);
+                    alert(`Invalid pattern structure: ${validationError}`);
+                    return;
+                }
+                
+                console.log('Pattern imported successfully:', pattern);
+                dispatch(setCompoundPattern(pattern));
+            } else {
+                console.log('Import cancelled by user');
+            }
+        } catch (error) {
+            console.error('Error importing pattern:', error);
+            alert(`Error importing pattern: ${(error as Error).message}`);
+        }
     };
 
     const handleResetPattern = () => {
         console.log('Reset pattern');
-        setCompoundPattern(null);
+        dispatch(setCompoundPattern(null));
     };
 
     const handleRun = () => {
@@ -101,32 +96,32 @@ function Compound() {
     };
 
     return (
-        <div className="compound-container">
-            <div className="compound-content">
-                <div className="compound-left">
-                    <CodeFilesSection 
+        <div className="compound-container d-flex flex-column p-4 pb-5">
+            <div className="compound-content d-flex flex-1 gap-4 overflow-hidden position-relative">
+                <div className="compound-left d-flex flex-column gap-3 flex-1">
+                    <CompoundPatternSection
+                        pattern={compoundPattern}
+                        onImportPattern={handleImportPattern}
+                        onResetPattern={handleResetPattern}
+                    />
+                </div>
+
+                <div className="compound-divider"></div>
+
+                <div className="compound-right d-flex flex-column gap-3 flex-1">
+                    <CodeFilesSection
                         codeFiles={codeFiles}
                         onAddCode={handleAddCode}
                         onResetCode={handleResetCode}
                         onDeleteFile={handleDeleteFile}
                     />
                 </div>
-
-                <div className="compound-divider"></div>
-
-                <div className="compound-right">
-                    <CompoundPatternSection 
-                        pattern={compoundPattern}
-                        onImportPattern={handleImportPattern}
-                        onResetPattern={handleResetPattern}
-                    />
-                </div>
             </div>
 
-            <div className="run-button-container">
-                <button className="btn-run" onClick={handleRun}>
+            <div className="run-button-container position-fixed bottom-0 start-0 end-0 d-flex justify-content-end align-items-center p-3 px-5">
+                <button className="btn-run d-flex align-items-center gap-2" onClick={handleRun} disabled={!isFilesReadyToMatch}>
                     <FontAwesomeIcon icon={faPlay} className="play-icon" />
-                    RUN
+                    MATCH
                 </button>
             </div>
         </div>

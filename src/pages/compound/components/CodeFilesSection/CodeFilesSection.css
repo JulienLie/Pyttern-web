@@ -1,18 +1,7 @@
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 4px;
-}
-
 .section-header h2 {
     font-size: 28px;
     font-weight: 600;
     color: #1f2937;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 0;
 }
 
 .section-header .header-icon {
@@ -29,11 +18,6 @@
     font-weight: 500;
 }
 
-.section-actions {
-    display: flex;
-    gap: 12px;
-}
-
 .btn-add,
 .btn-reset {
     padding: 10px 20px;
@@ -43,9 +27,6 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 6px;
 }
 
 .btn-add {
@@ -67,22 +48,10 @@
 }
 
 .file-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    background-color: #ffffff;
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
     overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .file-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 16px 16px;
-    border-bottom: 1px solid #e5e7eb;
     transition: all 0.2s ease;
     animation: slideIn 0.3s ease-out;
 }
@@ -132,18 +101,65 @@
 }
 
 .file-status {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: #059669;
-    font-size: 14px;
+    font-size: 15px;
+    font-weight: 500;
     flex: 1;
+    padding: 6px 15px;
+    border-radius: 16px;
+    width: fit-content;
+    transition: all 0.2s ease;
+}
+
+.status-text {
+    line-height: 1;
 }
 
 .status-icon {
+    font-size: 16px;
+}
+
+/* Ready Status - Green */
+.status-ready {
+    /*background-color: #d1fae5;*/
+    color: #065f46;
+}
+
+.status-ready .status-icon {
     color: #10b981;
-    font-size: 14px;
-    margin-right: 4px;
+}
+
+/* Pending Status - Yellow/Orange */
+.status-pending {
+    /*background-color: #fef3c7;*/
+    color: #92400e;
+}
+
+.status-pending .status-icon {
+    color: #f59e0b;
+}
+
+/* Error Status - Red */
+.status-error {
+    /*background-color: #fdd2d2;*/
+    color: #991b1b;
+}
+
+.status-error .status-icon {
+    color: #ef4444;
+}
+
+/* Spinning animation for pending status */
+.status-icon-spinning {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .btn-delete {
@@ -165,12 +181,6 @@
 }
 
 .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 20px;
-    text-align: center;
     color: #6b7280;
 }
 
@@ -182,7 +192,6 @@
 }
 
 .empty-state p {
-    margin: 0 0 20px 0;
     font-size: 16px;
     color: #9ca3af;
 }
@@ -197,9 +206,6 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
 }
 
 .btn-add-empty:hover {

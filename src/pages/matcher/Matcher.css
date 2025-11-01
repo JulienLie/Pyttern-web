@@ -1,3 +1,51 @@
 .matcher-container {
-    padding-top: 20px;
+    padding-top: 18px;
+}
+
+.matcher-container .btn {
+    font-size: 0.9rem;
+    padding: 0.45rem 0.9rem;
+}
+
+.matcher-container .form-control {
+    font-size: 0.9rem;
+    padding: 0.45rem 0.9rem;
+}
+
+.matcher-container label {
+    font-size: 0.9rem;
+}
+
+.matcher-container .row {
+    margin-bottom: 0.9rem;
+}
+
+.matcher-container .mx-2 {
+    margin-left: 0.45rem !important;
+    margin-right: 0.45rem !important;
+}
+
+.matcher-container .mb-3 {
+    margin-bottom: 1.08rem !important;
+}
+
+.matcher-container .p-4 {
+    padding: 1.44rem !important;
+}
+
+.matcher-container .m-1 {
+    margin: 0.225rem !important;
+}
+
+.matcher-container .cm-editor {
+    font-size: 0.9rem;
+}
+
+.matcher-container .cm-scroller {
+    font-size: 0.9rem;
+}
+
+.matcher-container .cm-content {
+    font-size: 0.9rem;
+    padding: 0.45rem;
 }

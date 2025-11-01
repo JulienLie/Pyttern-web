@@ -1,16 +1,33 @@
 .compound-container {
-    overflow: hidden;
+    height: calc(100vh - 167px); /* Full viewport height minus navbar (105px) and space for fixed button (~80px) */
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 167px);
 }
 
 .compound-content {
     z-index: 1;
     flex: 1;
+    overflow: hidden; /* Prevent this container from scrolling */
 }
 
 .compound-left,
 .compound-right {
-    flex: 1;
+    flex: 1 1 0; /* Allow equal distribution and shrinking */
     animation: slideInFromSide 0.5s ease-out;
+    min-height: 0; /* Important for flex children to respect overflow */
+    max-height: 100%; /* Constrain to parent height */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Prevent scrolling on container itself */
+}
+
+.compound-left {
+    padding-right: 4px;
+}
+
+.compound-right {
+    padding-right: 4px;
 }
 
 @keyframes slideInFromSide {
@@ -55,22 +72,22 @@
 }
 
 .btn-run {
-    padding: 16px 40px;
+    padding: 14px 36px;
     background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     color: white;
     border: none;
-    border-radius: 12px;
-    font-size: 18px;
+    border-radius: 11px;
+    font-size: 16px;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 2px 24px rgba(16, 185, 129, 0.4);
+    box-shadow: 0 2px 22px rgba(16, 185, 129, 0.4);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     letter-spacing: 0.5px;
 }
 
 .btn-run:hover {
     background: linear-gradient(135deg, #059669 0%, #047857 100%);
-    transform: translateY(-3px) scale(1.05);
+    transform: translateY(-3px) scale(1.04);
 }
 
 .btn-run:active {
@@ -90,7 +107,7 @@
 }
 
 .play-icon {
-    font-size: 16px;
+    font-size: 14px;
 }
 
 .btn-run:hover .play-icon {

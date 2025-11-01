@@ -1,7 +1,8 @@
 import './PatternTree.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFile, faFolder } from '@fortawesome/free-solid-svg-icons';
-import { CompoundPattern, CompoundPatternElement, PatternFile } from '../../../../store/slices/compoundSlice';
+import { CompoundPattern, CompoundPatternElement, PatternFile, selectPattern } from '../../../../store/slices/compoundSlice';
+import { useAppDispatch } from '../../../../store/hooks';
 
 
 interface PatternTreeProps {
@@ -9,6 +10,8 @@ interface PatternTreeProps {
 }
 
 function PatternTree({ pattern }: PatternTreeProps) {
+    const dispatch = useAppDispatch();
+
     // Helper function to check if an element is a pattern file (leaf node)
     const isPatternFile = (element: CompoundPatternElement): element is PatternFile => {
         return 'code' in element;
@@ -19,15 +22,25 @@ function PatternTree({ pattern }: PatternTreeProps) {
         return ['and', 'or', 'not'].includes(name.toLowerCase());
     };
 
+    const handleSelectPattern = (pattern: PatternFile): void => {
+        console.log(`Clicked on: ${pattern.filename}`);
+        dispatch(selectPattern(pattern.filename));
+    }
+
     // Recursive function to render tree nodes
     const renderTreeNode = (element: CompoundPatternElement): JSX.Element => {
         if (isPatternFile(element)) {
-            // Render a leaf node (pattern file)
             return (
-                <div key={element.id} className="tree-leaf">
-                    <span className="branch-line"></span>
+                <div 
+                    key={element.filename} 
+                    className={`tree-leaf`} 
+                    onClick={() => handleSelectPattern(element)}
+                >
+                    <span className={`branch-line`}></span>
                     <FontAwesomeIcon icon={faFile} className="leaf-icon" />
-                    <span className="leaf-text">{element.filename}</span>
+                    <span 
+                        className={`leaf-text ${element.isSelected ? 'selected' : ''}`}
+                    >{element.filename}</span>
                 </div>
             );
         } else {
@@ -51,6 +64,8 @@ function PatternTree({ pattern }: PatternTreeProps) {
             );
         }
     };
+
+    console.log('Haloo');
 
     return (
         <div className="pattern-tree-container bg-white rounded-3 border p-4 shadow-sm">

@@ -5,18 +5,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay } from '@fortawesome/free-solid-svg-icons';
 import { importCompoundPatternFromFolder, validateCompoundPattern, importCodeFiles } from './import.helper';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setCompoundPattern, setCodeFiles, FileStatus } from '../../store/slices/compoundSlice';
+import { setCompoundPattern, setCodeFiles, FileStatus, resetCompoundPattern } from '../../store/slices/compoundSlice';
 import { validateCodeFiles } from '../../services/compound/compoundService';
 
 function Compound() {
 
     const dispatch = useAppDispatch();
-    const { codeFiles, compoundPattern, isFilesReadyToMatch } = useAppSelector((state) => state.compound);
+    const { codeFiles, compoundPattern, isFilesReadyToMatch, selectedPatterns } = useAppSelector((state) => state.compound);
 
 
     const handleAddCode = async () => {
         try {
-            console.log('Add code - opening file picker');
             const newFiles = await importCodeFiles(codeFiles[0]?.lang || undefined);
             
             if (newFiles.length > 0) {
@@ -88,15 +87,17 @@ function Compound() {
 
     const handleResetPattern = () => {
         console.log('Reset pattern');
-        dispatch(setCompoundPattern(null));
+        dispatch(resetCompoundPattern());
     };
 
     const handleRun = () => {
         console.log('Run');
     };
 
+    console.log('Selected patterns:', selectedPatterns);
+
     return (
-        <div className="compound-container d-flex flex-column p-4 pb-5">
+        <div className="compound-container d-flex flex-column ps-4 pe-4 pt-4">
             <div className="compound-content d-flex flex-1 gap-4 overflow-hidden position-relative">
                 <div className="compound-left d-flex flex-column gap-3 flex-1">
                     <CompoundPatternSection
@@ -111,6 +112,7 @@ function Compound() {
                 <div className="compound-right d-flex flex-column gap-3 flex-1">
                     <CodeFilesSection
                         codeFiles={codeFiles}
+                        selectedPatterns={selectedPatterns}
                         onAddCode={handleAddCode}
                         onResetCode={handleResetCode}
                         onDeleteFile={handleDeleteFile}

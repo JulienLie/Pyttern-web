@@ -96,13 +96,15 @@ const processFilesArray = async (files: File[]): Promise<CompoundPattern | null>
     }
 
     // Convert tree to CompoundPattern
-    const convertTreeNode = async (node: TreeNode): Promise<CompoundPattern> => {
+    const convertTreeNode = async (node: TreeNode, isUnderNot: boolean = false): Promise<CompoundPattern> => {
         const children: CompoundPatternElement[] = [];
+        const isNotOperator = isLogicalOperator(node.name) && node.name.toLowerCase() === 'not';
+        const newIsUnderNot = isUnderNot || isNotOperator;
 
         if (node.children) {
             for (const [_, childNode] of node.children) {
                 if (childNode.type === 'directory' && isLogicalOperator(childNode.name)) {
-                    const subPattern = await convertTreeNode(childNode);
+                    const subPattern = await convertTreeNode(childNode, newIsUnderNot);
                     children.push(subPattern);
                 } else if (childNode.type === 'file' && childNode.file) {
                     const content = await readFileContent(childNode.file);
@@ -113,6 +115,7 @@ const processFilesArray = async (files: File[]): Promise<CompoundPattern | null>
                         status: FileStatus.PENDING,
                         lang: getLangFromFileExtension(childNode.name),
                         isSelected: false,
+                        isUnderNot: newIsUnderNot,
                     };
                     children.push(patternFile);
                 }
@@ -182,7 +185,7 @@ export const importCodeFiles = async (lang?: string): Promise<CodeFile[]> => {
 
         // Convert File objects to CodeFile objects
         const codeFiles: CodeFile[] = await Promise.all(
-            files.map(async (file, index) => {
+            files.map(async (file, _) => {
                 const content = await readFileContent(file);
                 const lang = getLangFromFileExtension(file.name);
 

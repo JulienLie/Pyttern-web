@@ -77,6 +77,19 @@
     background-color: #2563eb;
 }
 
+.btn-add:disabled {
+    background-color: #3b82f6;
+    color: white;
+    cursor: not-allowed;
+    opacity: 0.8;
+    filter: saturate(0.4) brightness(1.3);
+}
+
+.btn-add:disabled:hover {
+    background-color: #3b82f6;
+    transform: none;
+}
+
 .btn-reset {
     background-color: #ef4444;
     color: white;
@@ -84,6 +97,19 @@
 
 .btn-reset:hover {
     background-color: #dc2626;
+}
+
+.btn-reset:disabled {
+    background-color: #ef4444;
+    color: white;
+    cursor: not-allowed;
+    opacity: 0.8;
+    filter: saturate(0.4) brightness(1.3);
+}
+
+.btn-reset:disabled:hover {
+    background-color: #ef4444;
+    transform: none;
 }
 
 .pattern-empty-state {
@@ -119,5 +145,19 @@
     background-color: #2563eb;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.btn-import-empty:disabled {
+    background-color: #3b82f6;
+    color: white;
+    cursor: not-allowed;
+    opacity: 0.8;
+    filter: saturate(0.4) brightness(1.3);
+}
+
+.btn-import-empty:disabled:hover {
+    background-color: #3b82f6;
+    transform: none;
+    box-shadow: none;
 }
 

@@ -1,7 +1,7 @@
-import { CodeFile, FileStatus, CompoundPattern, CompoundPatternElement, PatternFile } from './compoundModels.ts';
-import { ValidationStatus } from './compoundApi.ts';
+import { CodeFile, FileStatus, CompoundPattern, CompoundPatternElement, PatternFile, ValidationStatus, MatchRequest, MatchResponse, MatchType } from './compoundModels.ts';
 import * as compoundApi from './compoundApi.ts';
 import { isNil } from 'lodash';
+import * as _ from 'lodash';
 
 export async function validateCodeFiles(codeFiles: CodeFile[]): Promise<CodeFile[]> {
     const filesToValidate = codeFiles.filter(
@@ -49,6 +49,36 @@ export async function validateCodeFiles(codeFiles: CodeFile[]): Promise<CodeFile
     return [...filesToNotValidate, ...updatedCodeFiles];
 }
 
+export function findPatternFileByFilename(
+    compoundPattern: CompoundPattern,
+    filename: string
+): PatternFile | null {
+    const traverse = (element: CompoundPatternElement): PatternFile | null => {
+        if ('code' in element) {
+            if (element.filename === filename) {
+                return element as PatternFile;
+            }
+            return null;
+        } else if ('children' in element && element.children) {
+            for (const child of element.children) {
+                const result = traverse(child);
+                if (result) {
+                    return result;
+                }
+            }
+        }
+        return null;
+    };
+
+    for (const child of compoundPattern.children) {
+        const result = traverse(child);
+        if (result) {
+            return result;
+        }
+    }
+    return null;
+}
+
 export function selectPatternsRecursively(
     element: CompoundPatternElement,
     selectedPattern: string,
@@ -79,15 +109,23 @@ export function selectPatternsRecursively(
 export function getPatternFilesOfCompound(compoundPattern: CompoundPattern): PatternFile[] {
     const patternFiles: PatternFile[] = [];
     
-    const traverse = (element: CompoundPatternElement) => {
+    const traverse = (element: CompoundPatternElement, isUnderNot: boolean = false) => {
         if ('code' in element) {
-            patternFiles.push(element as PatternFile);
+            // This is a PatternFile - set isUnderNot property
+            const patternFile: PatternFile = {
+                ...element,
+                isUnderNot: isUnderNot
+            };
+            patternFiles.push(patternFile);
         } else if ('children' in element && element.children) {
-            element.children.forEach(child => traverse(child));
+            // This is a CompoundPattern - check if it's a NOT operator
+            const isNotOperator = element.name.toLowerCase() === 'not';
+            const newIsUnderNot = isUnderNot || isNotOperator;
+            element.children.forEach(child => traverse(child, newIsUnderNot));
         }
     };
 
-    compoundPattern.children.forEach(child => traverse(child));
+    compoundPattern.children.forEach(child => traverse(child, false));
     return patternFiles;
 }
 
@@ -162,4 +200,38 @@ export async function validatePatterns(patternFiles: PatternFile[]): Promise<Pat
     });
 
     return updatedPatternFiles;
+}
+
+export async function startMatch(compoundPattern: CompoundPattern, codeFiles: CodeFile[]): Promise<CodeFile[]> {
+    const matchRequest: MatchRequest = {
+        compoundPattern: compoundPattern,
+        codes: codeFiles,
+    };
+
+    const matchResponse = await compoundApi.match(matchRequest);
+
+    const updatedCodeFiles = codeFiles.map((file) => {
+        const matchResult = matchResponse[file.filename];
+
+        if (isNil(matchResult)) {
+            return {
+                ...file,
+                status: FileStatus.ERROR,
+            };
+        }
+
+        return {
+            ...file,
+            patternsMatchResults: matchResult.patternsMatchResults,
+            status: matchResult.status === MatchType.MATCH ? FileStatus.MATCHED : FileStatus.NOT_MATCHED,
+        };
+    });
+
+    const sortedCodeFiles = _.sortBy(updatedCodeFiles, file => {
+        if (file.status === FileStatus.MATCHED) return 0;
+        if (file.status === FileStatus.NOT_MATCHED) return 1;
+        return 2;
+    });
+
+    return sortedCodeFiles;
 }

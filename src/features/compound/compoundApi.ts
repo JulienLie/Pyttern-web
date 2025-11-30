@@ -1,32 +1,5 @@
-import { CodeFile } from "./compoundModels.ts";
-
-export interface ValidationRequest {
-    codes: {
-        id: string;
-        filename: string;
-        code: string;
-    }[];
-    lang?: string;
-}
-
-export interface ValidationResponse {
-    [id: string]: {
-        filename: string;
-        status: ValidationStatus;
-        message?: {
-            line: number;
-            column: number;
-            symbol: string;
-            msg: string;
-        } | null;
-    };
-}
-
-export enum ValidationStatus {
-    OK = 'ok',
-    ERROR = 'error',
-}
-
+import { CodeFile, MatchRequest, MatchResponse, MatchType, PatternMatchStatus } from "./compoundModels.ts";
+import { ValidationRequest, ValidationResponse } from "./compoundModels.ts";
 
 export async function validateCodeFiles(codeFiles: CodeFile[]): Promise<ValidationResponse> {
 
@@ -37,7 +10,6 @@ export async function validateCodeFiles(codeFiles: CodeFile[]): Promise<Validati
 
     codeFiles.forEach(file => {
         requestBody.codes.push({
-            id: file.filename,
             filename: file.filename,
             code: file.code,
         });
@@ -61,4 +33,100 @@ export async function validateCodeFiles(codeFiles: CodeFile[]): Promise<Validati
     const responseData = await response.json();
 
     return responseData as ValidationResponse;
+}
+
+export async function match(matchRequest: MatchRequest): Promise<MatchResponse> {
+    // TODO: Implement the match API call
+
+    // TODO: Delete this after update!
+    await new Promise(resolve => setTimeout(resolve, 3000));
+
+    const responseData: MatchResponse = {
+        "code1.py": {
+            status: MatchType.MATCH,
+            patternsMatchResults: {
+                "pattern3.py": {
+                    matchType: PatternMatchStatus.NOT_MATCHED
+                },
+                "pattern2.py": {
+                    matchType: PatternMatchStatus.NOT_CHECKED
+                },
+                "pattern1.py": {
+                    matchType: PatternMatchStatus.MATCHED
+                },
+            }
+        },
+        "code2.py": {
+            status: MatchType.NOT_MATCH,
+            patternsMatchResults: {
+                "pattern3.py": {
+                    matchType: PatternMatchStatus.MATCHED
+                },
+                "pattern2.py": {
+                    matchType: PatternMatchStatus.NOT_MATCHED
+                },
+                "pattern1.py": {
+                    matchType: PatternMatchStatus.NOT_CHECKED
+                },
+            }
+        },
+        "code3.py": {
+            status: MatchType.MATCH,
+            patternsMatchResults: {
+                "pattern3.py": {
+                    matchType: PatternMatchStatus.MATCHED
+                },
+                "pattern2.py": {
+                    matchType: PatternMatchStatus.MATCHED
+                },
+                "pattern1.py": {
+                    matchType: PatternMatchStatus.MATCHED
+                },
+            }
+        },
+        "code4.py": {
+            status: MatchType.NOT_MATCH,
+            patternsMatchResults: {
+                "pattern3.py": {
+                    matchType: PatternMatchStatus.NOT_MATCHED
+                },
+                "pattern2.py": {
+                    matchType: PatternMatchStatus.NOT_CHECKED
+                },
+                "pattern1.py": {
+                    matchType: PatternMatchStatus.NOT_MATCHED
+                },
+            }
+        },
+        "code5.py": {
+            status: MatchType.NOT_MATCH,
+            patternsMatchResults: {
+                "pattern3.py": {
+                    matchType: PatternMatchStatus.MATCHED
+                },
+                "pattern2.py": {
+                    matchType: PatternMatchStatus.MATCHED
+                },
+                "pattern1.py": {
+                    matchType: PatternMatchStatus.NOT_MATCHED
+                },
+            }
+        },
+        "code6.py": {
+            status: MatchType.MATCH,
+            patternsMatchResults: {
+                "pattern3.py": {
+                    matchType: PatternMatchStatus.NOT_MATCHED
+                },
+                "pattern2.py": {
+                    matchType: PatternMatchStatus.NOT_CHECKED
+                },
+                "pattern1.py": {
+                    matchType: PatternMatchStatus.MATCHED
+                },
+            }
+        },
+    }
+
+    return responseData;
 }

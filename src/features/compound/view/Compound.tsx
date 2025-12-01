@@ -2,6 +2,7 @@ import './Compound.css';
 import CodeFilesSection from './components/CodeFilesSection/CodeFilesSection.tsx';
 import CompoundPatternSection from './components/CompoundPatternSection/CompoundPatternSection.tsx';
 import FilterPanel from './components/FilterPanel/FilterPanel.tsx';
+import ConfirmationModal from '../../../common/components/confirmation-modal/ConfirmationModal.tsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { importCompoundPatternFromFolder, validateCompoundPatternStructure, importCodeFiles } from '../importUtils.ts';
@@ -9,7 +10,7 @@ import { useAppDispatch, useAppSelector } from '../../../common/hooks.ts';
 import { setCompoundPattern, setCodeFiles, resetCompoundPattern, resetState } from '../compoundSlice.ts';
 import { startMatch, validateCodeFiles, validatePatterns } from '../compoundThunks.ts';
 import { FileStatus } from '../compoundModels.ts';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 
 function Compound() {
     const dispatch = useAppDispatch();
@@ -17,8 +18,13 @@ function Compound() {
     const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
     const [dividerPosition, setDividerPosition] = useState(50); // Percentage from left
     const [isDragging, setIsDragging] = useState(false);
+    const [isMatchModalOpen, setIsMatchModalOpen] = useState(false);
+    const [isResetModalOpen, setIsResetModalOpen] = useState(false);
+    const [isResetPatternModalOpen, setIsResetPatternModalOpen] = useState(false);
+    const [isResetCodeModalOpen, setIsResetCodeModalOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const dividerRef = useRef<HTMLDivElement>(null);
+    const rafRef = useRef<number | null>(null);
 
     const handleAddCode = async () => {
         try {
@@ -57,7 +63,12 @@ function Compound() {
     };
 
     const handleResetCode = () => {
+        setIsResetCodeModalOpen(true);
+    };
+
+    const handleResetCodeApprove = () => {
         dispatch(setCodeFiles([]));
+        setIsResetCodeModalOpen(false);
     };
 
     const handleDeleteFile = (filename: string) => {
@@ -92,49 +103,61 @@ function Compound() {
     };
 
     const handleResetPattern = () => {
+        setIsResetPatternModalOpen(true);
+    };
+
+    const handleResetPatternApprove = () => {
         console.log('Reset pattern');
         dispatch(resetCompoundPattern());
+        setIsResetPatternModalOpen(false);
     };
 
     const handleMatch = () => {
+        setIsMatchModalOpen(true);
+    };
+
+    const handleMatchApprove = () => {
         console.log('match');
         dispatch(startMatch());
+        setIsMatchModalOpen(false);
     };
 
     const handleResetMatch = () => {
-        dispatch(resetState());
+        setIsResetModalOpen(true);
     };
 
-    const adjustDivider = (isDragging: boolean) => {
-        const handleMouseMove = (e: MouseEvent) => {
-            if (!isDragging || !containerRef.current) return;
+    const handleResetApprove = () => {
+        dispatch(resetState());
+        setIsResetModalOpen(false);
+        setIsFilterPanelOpen(false);
+    };
 
-            const containerRect = containerRef.current.getBoundingClientRect();
+    const handleMouseMove = useCallback((e: MouseEvent) => {
+        if (!containerRef.current) return;
+
+        // Cancel any pending animation frame
+        if (rafRef.current !== null) {
+            cancelAnimationFrame(rafRef.current);
+        }
+
+        // Use requestAnimationFrame for smooth updates
+        rafRef.current = requestAnimationFrame(() => {
+            const containerRect = containerRef.current!.getBoundingClientRect();
             const newPosition = ((e.clientX - containerRect.left) / containerRect.width) * 100;
             
             // Constrain between 20% and 80% to prevent sections from becoming too small
             const constrainedPosition = Math.max(20, Math.min(80, newPosition));
             setDividerPosition(constrainedPosition);
-        };
+        });
+    }, []);
 
-        const handleMouseUp = () => {
-            setIsDragging(false);
-        };
-
-        if (isDragging) {
-            document.addEventListener('mousemove', handleMouseMove);
-            document.addEventListener('mouseup', handleMouseUp);
-            document.body.style.cursor = 'col-resize';
-            document.body.style.userSelect = 'none';
+    const handleMouseUp = useCallback(() => {
+        setIsDragging(false);
+        if (rafRef.current !== null) {
+            cancelAnimationFrame(rafRef.current);
+            rafRef.current = null;
         }
-
-        return () => {
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('mouseup', handleMouseUp);
-            document.body.style.cursor = '';
-            document.body.style.userSelect = '';
-        };
-    }
+    }, []);
 
     const handleDividerMouseDown = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -143,8 +166,27 @@ function Compound() {
 
     // Handle divider drag
     useEffect(() => {
-        return adjustDivider(isDragging);
-    }, [isDragging]);
+        if (isDragging) {
+            document.addEventListener('mousemove', handleMouseMove, { passive: true });
+            document.addEventListener('mouseup', handleMouseUp);
+            document.body.style.cursor = 'col-resize';
+            document.body.style.userSelect = 'none';
+        } else {
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+        }
+
+        return () => {
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+            if (rafRef.current !== null) {
+                cancelAnimationFrame(rafRef.current);
+                rafRef.current = null;
+            }
+        };
+    }, [isDragging, handleMouseMove, handleMouseUp]);
 
 
 
@@ -155,7 +197,7 @@ function Compound() {
                 className="compound-content d-flex flex-1 gap-4 overflow-hidden position-relative"
             >
                 <div 
-                    className="compound-left d-flex flex-column gap-3"
+                    className={`compound-left d-flex flex-column gap-3 ${isDragging ? 'no-transition' : ''}`}
                     style={{ width: `${dividerPosition}%`, minWidth: '200px' }}
                 >
                     <CompoundPatternSection
@@ -173,7 +215,7 @@ function Compound() {
                 ></div>
 
                 <div 
-                    className={`compound-right d-flex flex-column gap-3 ${isFilterPanelOpen ? 'shift-for-filter-panel' : ''}`}
+                    className={`compound-right d-flex flex-column gap-3 ${isFilterPanelOpen ? 'shift-for-filter-panel' : ''} ${isDragging ? 'no-transition' : ''}`}
                     style={{ width: `${100 - dividerPosition}%`, minWidth: '200px' }}
                 >
                     <CodeFilesSection
@@ -210,6 +252,37 @@ function Compound() {
                     MATCH
                 </button>
             </div>
+
+            <ConfirmationModal
+                isOpen={isMatchModalOpen}
+                question="This action will start the matching process."
+                onApprove={handleMatchApprove}
+                onRequestClose={() => setIsMatchModalOpen(false)}
+            />
+
+            <ConfirmationModal
+                isOpen={isResetModalOpen}
+                question="This action will clear all match results and reset the state."
+                onApprove={handleResetApprove}
+                onRequestClose={() => setIsResetModalOpen(false)}
+                isConfirmPositive={false}
+            />
+
+            <ConfirmationModal
+                isOpen={isResetPatternModalOpen}
+                question="This action will clear the imported pattern."
+                onApprove={handleResetPatternApprove}
+                onRequestClose={() => setIsResetPatternModalOpen(false)}
+                isConfirmPositive={false}
+            />
+
+            <ConfirmationModal
+                isOpen={isResetCodeModalOpen}
+                question="This action will remove all imported code files."
+                onApprove={handleResetCodeApprove}
+                onRequestClose={() => setIsResetCodeModalOpen(false)}
+                isConfirmPositive={false}
+            />
         </div>
     );
 }

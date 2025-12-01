@@ -26,7 +26,7 @@ function CompoundPatternSection({ pattern, isMatchDone, onImportPattern, onReset
                     <button className="btn-add d-flex align-items-center gap-2" onClick={onImportPattern} disabled={isMatchDone}>
                         <FontAwesomeIcon icon={faFileImport} /> Import Pattern
                     </button>
-                    <button className="btn-reset d-flex align-items-center gap-2" onClick={onResetPattern} disabled={isMatchDone}>
+                    <button className="btn-reset d-flex align-items-center gap-2" onClick={onResetPattern} disabled={isMatchDone || !pattern}>
                         <FontAwesomeIcon icon={faRotateRight} /> Reset
                     </button>
                 </div>

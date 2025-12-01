@@ -18,6 +18,7 @@ interface ExpandableCardProps {
     className?: string;
     postfixButtonClassName?: string;
     hoverAnimation?: boolean;
+    headerClassName?: string;
 }
 
 function ExpandableCard({
@@ -33,7 +34,8 @@ function ExpandableCard({
     defaultExpanded = false,
     className = '',
     postfixButtonClassName = 'btn-postfix-action',
-    hoverAnimation = true
+    hoverAnimation = true,
+    headerClassName = ''
 }: ExpandableCardProps) {
     const [isExpanded, setIsExpanded] = useState(defaultExpanded);
     const contentRef = useRef<HTMLDivElement>(null);
@@ -63,7 +65,7 @@ function ExpandableCard({
             className={`card expandable-card ${ableToOpen ? 'expandable-card-clickable' : ''} ${hoverAnimation ? 'expandable-card-hover' : ''} ${className}`}
         >
             <div 
-                className={`card-body expandable-card-header d-flex align-items-center gap-3 ${ableToOpen ? 'cursor-pointer' : ''}`}
+                className={`card-body expandable-card-header d-flex align-items-center gap-3 ${ableToOpen ? 'cursor-pointer' : ''} ${headerClassName}`}
                 onClick={handleCardClick}
             >
                 {ableToOpen && (

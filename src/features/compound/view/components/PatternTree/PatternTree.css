@@ -61,8 +61,12 @@
     cursor: default !important;
 }
 
-.tree-leaf:hover {
+.tree-leaf.clickable:hover {
     cursor: pointer;
+}
+
+.tree-leaf.non-clickable {
+    cursor: default;
 }
 
 .node-text.root {
@@ -107,7 +111,7 @@
 
 
 
-.tree-leaf:hover {
+.tree-leaf.clickable:hover {
     transform: translateX(7px);
 }
 
@@ -115,6 +119,19 @@
     color: #3b82f6;
     font-size: 13px;
     margin-right: 5px;
+    transition: color 0.2s ease;
+}
+
+.leaf-icon-matched {
+    color: #10b981; /* Green for matched */
+}
+
+.leaf-icon-not-matched {
+    color: #ef4444; /* Red for not matched */
+}
+
+.leaf-icon-not-checked {
+    color: #6b7280; /* Gray for not checked */
 }
 
 .tree-leaf {
@@ -140,16 +157,46 @@
     max-width: none; /* Allow text to expand as needed */
 }
 
-.tree-leaf:hover .leaf-text {
+.tree-leaf.clickable:hover .leaf-text {
     background-color: #eff6ff;
     border-color: #3b82f6;
     color: #1e40af;
 }
 
-.leaf-text.selected {
+.leaf-text.matched {
     background-color: #ecfdf5 !important;
     border-color: #10b981 !important;
     color: #047857 !important;
+}
+
+.leaf-text.selected {
+    background-color: #dbeafe !important;
+    border-color: #3b82f6 !important;
+    color: #1e40af !important;
+}
+
+.tree-leaf .leaf-icon-matched {
+    color: #10b981 !important;
+}
+
+.leaf-text.not-matched {
+    background-color: #fee2e2 !important;
+    border-color: #ef4444 !important;
+    color: #991b1b !important;
+}
+
+.tree-leaf .leaf-icon-not-matched {
+    color: #ef4444 !important;
+}
+
+.leaf-text.not-checked {
+    background-color: #f9fafb !important;
+    border-color: #b3b5b7 !important;
+    color: #6b7280 !important;
+}
+
+.tree-leaf .leaf-icon-not-checked {
+    color: #6b7280 !important;
 }
 
 .branch-line::before {

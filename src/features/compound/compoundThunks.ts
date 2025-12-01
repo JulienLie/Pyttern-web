@@ -52,3 +52,33 @@ export const validatePatterns = createAsyncThunk<
         }
     }
 );
+
+
+export const startMatch = createAsyncThunk<
+    CodeFile[],
+    void,
+    { state: RootState }
+>(
+    'compound/startMatch',
+    async (_, { dispatch, getState }) => {
+        dispatch(setAppLoaderOn());
+
+        try {
+            const { compound } = getState();
+            const codeFiles: CodeFile[] = compound.codeFiles;
+            const compoundPattern = compound.compoundPattern;
+
+            if (!compoundPattern) {
+                throw new Error('No compound pattern provided for match');
+            }
+
+            return await compoundService.startMatch(compoundPattern, codeFiles);
+        } catch (error) {
+            console.error("Error starting match:", error);
+            return [];
+        }
+        finally {
+            dispatch(setAppLoaderOff());
+        }
+    }
+);

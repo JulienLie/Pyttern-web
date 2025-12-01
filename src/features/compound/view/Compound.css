@@ -13,13 +13,13 @@
 
 .compound-left,
 .compound-right {
-    flex: 1 1 0; /* Allow equal distribution and shrinking */
     animation: slideInFromSide 0.5s ease-out;
     min-height: 0; /* Important for flex children to respect overflow */
     max-height: 100%; /* Constrain to parent height */
     display: flex;
     flex-direction: column;
     overflow: hidden; /* Prevent scrolling on container itself */
+    transition: width 0.1s ease-out;
 }
 
 .compound-left {
@@ -28,6 +28,11 @@
 
 .compound-right {
     padding-right: 4px;
+    transition: margin-right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.compound-right.shift-for-filter-panel {
+    margin-right: 330px; /* Shift the content to the left by the panel's width */
 }
 
 @keyframes slideInFromSide {
@@ -54,24 +59,78 @@
 }
 
 .compound-divider {
-    width: 4px;
+    width: 4.5px;
+    /*
     background: linear-gradient(to bottom, 
         #3b82f6 0%, 
         #8b5cf6 50%, 
         #3b82f6 100%);
+    */
+    background: #327aee;
     border-radius: 4px;
     box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
     position: relative;
+    cursor: col-resize;
+    flex-shrink: 0;
+    user-select: none;
+    transition: all 0.2s ease;
 }
 
-.run-button-container {
+.compound-divider::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 1.5px;
+    height: 40px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 1px;
+}
+
+.compound-divider:hover {
+    width: 6px;
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+    /*
+    background: linear-gradient(to bottom, 
+        #2563eb 0%, 
+        #7c3aed 50%, 
+        #2563eb 100%);
+    */
+    background: #2563eb;
+}
+
+.compound-divider:hover::before {
+    width: 1.5px;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.compound-divider.dragging {
+    width: 6px;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.7);
+    /*
+    background: linear-gradient(to bottom, 
+        #1d4ed8 0%, 
+        #6d28d9 50%, 
+        #1d4ed8 100%);
+    */
+    background: #1d4ed8;
+    z-index: 10;
+}
+
+.compound-divider.dragging::before {
+    width: 1.5px;
+    background: rgba(255, 255, 255, 1);
+}
+
+.match-button-container {
     background: rgba(255, 255, 255, 0.9);
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     border-top: 2px solid #e5e7eb;
 }
 
-.btn-run {
+.btn-match {
     padding: 14px 36px;
     background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     color: white;
@@ -85,23 +144,23 @@
     letter-spacing: 0.5px;
 }
 
-.btn-run:hover {
+.btn-match:hover {
     background: linear-gradient(135deg, #059669 0%, #047857 100%);
     transform: translateY(-3px) scale(1.04);
 }
 
-.btn-run:active {
+.btn-match:active {
     transform: translateY(-1px) scale(1.02);
 }
 
-.btn-run:disabled {
+.btn-match:disabled {
     background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
     cursor: not-allowed;
     box-shadow: 0 2px 12px rgba(107, 114, 128, 0.2);
     opacity: 0.6;
 }
 
-.btn-run:disabled:hover {
+.btn-match:disabled:hover {
     transform: none;
     background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
 }
@@ -110,7 +169,28 @@
     font-size: 14px;
 }
 
-.btn-run:hover .play-icon {
+.btn-match:hover .play-icon {
     animation: none;
     transform: scale(1.2);
+}
+
+.btn-reset-match {
+    padding: 14px 36px;
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 11px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.5px;
+}
+
+.btn-reset-match:hover {
+    transform: translateY(-3px) scale(1.03);
+}
+
+.btn-reset-match:active {
+    transform: translateY(-1px) scale(1.02);
 }

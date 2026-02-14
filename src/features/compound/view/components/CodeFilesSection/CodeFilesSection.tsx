@@ -124,7 +124,7 @@ function CodeFilesSection({ codeFiles, pattern, selectedPatterns, patternFilters
                         <button className="btn-add d-flex align-items-center gap-2" onClick={onAddCode} disabled={isMatchDone}>
                             <FontAwesomeIcon icon={faPlus} /> Add Code
                         </button>
-                        <button className="btn-reset d-flex align-items-center gap-2" onClick={onResetCode} disabled={isMatchDone}>
+                        <button className="btn-reset d-flex align-items-center gap-2" onClick={onResetCode} disabled={isMatchDone || codeFiles.length === 0}>
                             <FontAwesomeIcon icon={faRotateRight} /> Reset
                         </button>
                     </div>

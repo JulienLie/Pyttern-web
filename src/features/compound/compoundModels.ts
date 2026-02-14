@@ -15,7 +15,8 @@ export interface ValidationError {
 }
 
 export enum FileStatus {
-    READY = 'ready',
+    VALIDATED = 'validated',
+    NOT_VALIDATED = 'not-validated',
     PENDING = 'pending',
     MATCHED = 'matched',
     NOT_MATCHED = "not-matched",
@@ -39,12 +40,6 @@ export interface PatternFile extends CodeFile {
 export enum MatchType {
     MATCH = 'match',
     NOT_MATCH = 'not_match',
-}
-
-export enum ClickPatternType {
-    NONE = 'none',
-    FILTER = 'filter',
-    MATCHER = 'matcher',
 }
 
 export enum PatternMatchStatus {

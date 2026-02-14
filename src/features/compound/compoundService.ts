@@ -1,4 +1,4 @@
-import { CodeFile, FileStatus, CompoundPattern, CompoundPatternElement, PatternFile, ValidationStatus, MatchRequest, MatchResponse, MatchType } from './compoundModels.ts';
+import { CodeFile, FileStatus, CompoundPattern, CompoundPatternElement, PatternFile, ValidationStatus, MatchType } from './compoundModels.ts';
 import * as compoundApi from './compoundApi.ts';
 import { isNil } from 'lodash';
 import * as _ from 'lodash';
@@ -34,13 +34,13 @@ export async function validateCodeFiles(codeFiles: CodeFile[]): Promise<CodeFile
         if (result.status === ValidationStatus.OK) {
             return {
                 ...file,
-                status: FileStatus.READY,
+                status: FileStatus.VALIDATED,
                 validationError: null
             };
         } else {
             return {
                 ...file,
-                status: FileStatus.ERROR,
+                status: FileStatus.NOT_VALIDATED,
                 validationError: result.message ?? unknownError
             };
         }
@@ -187,13 +187,13 @@ export async function validatePatterns(patternFiles: PatternFile[]): Promise<Pat
         if (result.status === ValidationStatus.OK) {
             return {
                 ...file,
-                status: FileStatus.READY,
+                status: FileStatus.VALIDATED,
                 validationError: null
             };
         } else {
             return {
                 ...file,
-                status: FileStatus.ERROR,
+                status: FileStatus.NOT_VALIDATED,
                 validationError: result.message ?? unknownError
             };
         }
@@ -203,7 +203,11 @@ export async function validatePatterns(patternFiles: PatternFile[]): Promise<Pat
 }
 
 export async function startMatch(compoundPattern: CompoundPattern, codeFiles: CodeFile[]): Promise<CodeFile[]> {
-    const matchResponse = await compoundApi.match(compoundPattern, codeFiles);
+
+    const codeFilesToMatch = codeFiles.filter(file => file.status === FileStatus.VALIDATED);
+    const notValidatedCodeFiles = codeFiles.filter(file => file.status === FileStatus.NOT_VALIDATED);
+
+    const matchResponse = await compoundApi.match(compoundPattern, codeFilesToMatch);
 
     const updatedCodeFiles = codeFiles.map((file) => {
         const matchResult = matchResponse[file.filename];
@@ -218,14 +222,19 @@ export async function startMatch(compoundPattern: CompoundPattern, codeFiles: Co
         return {
             ...file,
             patternsMatchResults: matchResult.patternsMatchResults,
-            status: matchResult.status === MatchType.MATCH ? FileStatus.MATCHED : FileStatus.NOT_MATCHED,
+            status: matchResult.status === MatchType.MATCH ? FileStatus.MATCHED : 
+                matchResult.status === MatchType.NOT_MATCH ? FileStatus.NOT_MATCHED : FileStatus.ERROR,
         };
     });
+
+
 
     const sortedCodeFiles = _.sortBy(updatedCodeFiles, file => {
         if (file.status === FileStatus.MATCHED) return 0;
         if (file.status === FileStatus.NOT_MATCHED) return 1;
-        return 2;
+        if (file.status === FileStatus.NOT_VALIDATED) return 2;
+        if (file.status === FileStatus.ERROR) return 3;
+        return 4;
     });
 
     return sortedCodeFiles;

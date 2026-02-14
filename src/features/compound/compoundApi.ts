@@ -24,10 +24,15 @@ export async function validateCodeFiles(codeFiles: CodeFile[]): Promise<Validati
     });
 
     // TODO: Delete this after testing!!!
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
     if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const message = response.status >= 500
+            ? 'Server error. Please try again later.'
+            : response.status === 404
+                ? 'Service not found.'
+                : `Request failed (${response.status}).`;
+        throw new Error(message);
     }
 
     const responseData = await response.json();
@@ -36,8 +41,6 @@ export async function validateCodeFiles(codeFiles: CodeFile[]): Promise<Validati
 }
 
 export async function match(compoundPattern: CompoundPattern, codeFiles: CodeFile[]): Promise<MatchResponse> {
-    // TODO: Implement the match API call
-
     const requestBody: MatchRequest = {
         compoundPattern: compoundPattern,
         codes: [],
@@ -63,7 +66,12 @@ export async function match(compoundPattern: CompoundPattern, codeFiles: CodeFil
     await new Promise(resolve => setTimeout(resolve, 3000));
 
     if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const message = response.status >= 500
+            ? 'Server error. Please try again later.'
+            : response.status === 404
+                ? 'Not Found ERROR.'
+                : `Request failed (${response.status}).`;
+        throw new Error(message);
     }
 
     const responseData = await response.json();

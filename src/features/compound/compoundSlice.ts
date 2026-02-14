@@ -29,10 +29,8 @@ const compoundSlice = createSlice({
         setCodeFiles: (state, action: PayloadAction<CodeFile[]>) => {
             updateCodeFiles(state, action.payload);
         },
-        setCompoundPattern: (state, action: PayloadAction<CompoundPattern | null>) => {
-            state.compoundPattern = action.payload;
-            state.patternFilters = {};
-            state.selectedPatterns = [];
+        setCompoundPattern: (state, action: PayloadAction<CompoundPattern>) => {
+            updatePatternFiles(state, action.payload);
         },
         selectPattern: (state, action: PayloadAction<string>) => {
             if (state.compoundPattern == null) {
@@ -113,7 +111,7 @@ const compoundSlice = createSlice({
                 state.err = null;
             })
             .addCase(validatePatterns.fulfilled, (state: CompoundState, action) => {
-                state.compoundPattern = action.payload;
+                updatePatternFiles(state, action.payload);
                 state.isLoading = false;
             })
             .addCase(validatePatterns.rejected, (state: CompoundState, action) => {
@@ -151,5 +149,22 @@ export default compoundSlice.reducer;
 
 const updateCodeFiles = (state: CompoundState, codeFiles: CodeFile[]) => {
     state.codeFiles = codeFiles;
-    state.isFilesReadyToMatch = !_.isEmpty(codeFiles) && codeFiles.every((file) => file.status === FileStatus.READY);
+    state.isFilesReadyToMatch = !_.isEmpty(codeFiles) && codeFiles.every((file) => file.status === FileStatus.VALIDATED || file.status === FileStatus.NOT_VALIDATED);
+};
+
+const updatePatternFiles = (state: CompoundState, compoundPattern: CompoundPattern) => {
+    state.compoundPattern = compoundPattern;
+    state.patternFilters = {};
+    state.selectedPatterns = [];
+    state.isPatternReadyToMatch = !_.isEmpty(compoundPattern) && recursivelyCheckPatternFiles(compoundPattern);
+};
+
+const recursivelyCheckPatternFiles = (compoundPattern: CompoundPattern): boolean => {
+    return compoundPattern.children.every((child) => {
+        if ('code' in child) {
+            return _.isNil(child.validationError);
+        } else {
+            return recursivelyCheckPatternFiles(child);
+        }
+    });
 };

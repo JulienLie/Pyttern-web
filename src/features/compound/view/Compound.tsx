@@ -1,10 +1,9 @@
 import './Compound.css';
-import CodeFilesSection from './components/CodeFilesSection/CodeFilesSection.tsx';
-import CompoundPatternSection from './components/CompoundPatternSection/CompoundPatternSection.tsx';
-import FilterPanel from './components/FilterPanel/FilterPanel.tsx';
+import CodeFilesSection from './components/code-files-section/CodeFilesSection.tsx';
+import CompoundPatternSection from './components/compound-pattern-section/CompoundPatternSection.tsx';
+import FilterPanel from './components/filter-panel/FilterPanel.tsx';
+import MatchFooter from './components/match-footer/MatchFooter.tsx';
 import ConfirmationModal from '../../../common/components/confirmation-modal/ConfirmationModal.tsx';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlay, faRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { importCompoundPatternFromFolder, validateCompoundPatternStructure, importCodeFiles } from '../importUtils.ts';
 import { useAppDispatch, useAppSelector } from '../../../common/hooks.ts';
 import { setCompoundPattern, setCodeFiles, resetCompoundPattern, resetState } from '../compoundSlice.ts';
@@ -14,7 +13,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 
 function Compound() {
     const dispatch = useAppDispatch();
-    const { codeFiles, compoundPattern, isFilesReadyToMatch, isMatchDone, selectedPatterns, patternFilters } = useAppSelector((state) => state.compound);
+    const { codeFiles, compoundPattern, isFilesReadyToMatch, isPatternReadyToMatch, isMatchDone, selectedPatterns, patternFilters } = useAppSelector((state) => state.compound);
     const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
     const [dividerPosition, setDividerPosition] = useState(50); // Percentage from left
     const [isDragging, setIsDragging] = useState(false);
@@ -240,18 +239,13 @@ function Compound() {
                 patternFilters={patternFilters}
             />
 
-            <div className="match-button-container position-fixed bottom-0 start-0 end-0 d-flex justify-content-end align-items-center p-3 px-5 gap-3">
-                {isMatchDone && (
-                    <button className="btn-reset-match d-flex align-items-center gap-2" onClick={handleResetMatch}>
-                        <FontAwesomeIcon icon={faRotateRight} />
-                        RESET
-                    </button>
-                )}
-                <button className="btn-match d-flex align-items-center gap-2" onClick={handleMatch} disabled={!isFilesReadyToMatch || isMatchDone}>
-                    <FontAwesomeIcon icon={faPlay} className="play-icon" />
-                    MATCH
-                </button>
-            </div>
+            <MatchFooter
+                isMatchDone={isMatchDone}
+                isFilesReadyToMatch={isFilesReadyToMatch}
+                isPatternReadyToMatch={isPatternReadyToMatch}
+                onMatch={handleMatch}
+                onResetMatch={handleResetMatch}
+            />
 
             <ConfirmationModal
                 isOpen={isMatchModalOpen}

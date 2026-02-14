@@ -1,10 +1,16 @@
 import './CodeFilesSection.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCode, faPlus, faRotateRight, faFile, faCheckCircle, faTrashAlt, faSpinner, faExclamationTriangle, faFilter, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
-import { CodeFile, CompoundPattern, FileStatus, CompoundPatternElement, PatternFile, PatternsMatchResult, PatternMatchStatus, ClickPatternType, PatternFilterConfig, MatchType } from '../../../compoundModels.ts';
+import { CodeFile, CompoundPattern, FileStatus, CompoundPatternElement, PatternFile, PatternsMatchResult, PatternMatchStatus, ClickPatternType, PatternFilterConfig, MatchType, ValidationError } from '../../../compoundModels.ts';
 import ExpandableCard from '../../../../../common/components/expandable-card/ExpandableCard.tsx';
 import PatternTree from '../PatternTree/PatternTree.tsx';
 import _ from 'lodash';
+import CodeMirror from '@uiw/react-codemirror';
+import { python } from '@codemirror/lang-python';
+import { java } from '@codemirror/lang-java';
+import { Extension } from '@codemirror/state';
+import { Decoration, DecorationSet, ViewPlugin, EditorView } from '@codemirror/view';
+import { RangeSetBuilder } from '@codemirror/state';
 
 interface CodeFilesSectionProps {
     codeFiles: CodeFile[];
@@ -16,6 +22,56 @@ interface CodeFilesSectionProps {
     onResetCode: () => void;
     onDeleteFile: (filename: string) => void;
     onOpenFilterPanel: () => void;
+}
+
+function getLangExtension(lang: string): Extension[] {
+    const normalized = (lang || '').toLowerCase();
+    if (normalized === 'java' || normalized === 'jat') return [java()];
+    return [python()]; // default for .py, .pyt, .pyh
+}
+
+/** Highlights a single line (1-based) with the error-line class. */
+function highlightErrorLine(lineNumber: number): Extension {
+    if (!(lineNumber >= 1)) return [];
+    return ViewPlugin.fromClass(
+        class {
+            decorations: DecorationSet;
+            constructor(view: EditorView) {
+                this.decorations = this.build(view);
+            }
+            update(update: { docChanged: boolean; view: EditorView }) {
+                if (update.docChanged) this.decorations = this.build(update.view);
+            }
+            build(view: EditorView): DecorationSet {
+                const builder = new RangeSetBuilder<Decoration>();
+                const doc = view.state.doc;
+                const lineNum = Math.min(Math.max(1, lineNumber), doc.lines);
+                const line = doc.line(lineNum);
+                // Line decoration: both positions at line start so the full row gets the class
+                builder.add(line.from, line.from, Decoration.line({ attributes: { class: 'cm-error-line' } }));
+                return builder.finish();
+            }
+        },
+        { decorations: (v) => v.decorations }
+    );
+}
+
+function ValidationErrorCallout({ error }: { error: ValidationError }) {
+    const hasLocation = typeof error.line === 'number' || typeof error.column === 'number';
+    return (
+        <div className="validation-error-callout">
+            <div className="validation-error-callout-header">
+                <FontAwesomeIcon icon={faExclamationTriangle} className="validation-error-icon" />
+                <span className="validation-error-label">Validation Error</span>
+                {hasLocation && (
+                    <span className="validation-error-location">
+                        Line {error.line ?? '?'}, Column {error.column ?? '?'}
+                    </span>
+                )}
+            </div>
+            <pre className="validation-error-message">{error.msg}</pre>
+        </div>
+    );
 }
 
 function CodeFilesSection({ codeFiles, pattern, selectedPatterns, patternFilters, isMatchDone, onAddCode, onResetCode, onDeleteFile, onOpenFilterPanel }: CodeFilesSectionProps) {
@@ -138,29 +194,6 @@ function CodeFilesSection({ codeFiles, pattern, selectedPatterns, patternFilters
                         </button>
                     )}
                 </div>
-
-                {/*
-                {selectedPatterns.length > 0 && (
-                    <div className="pt-4 ps-4 pe-4 pb-2">
-                        <div className="d-flex align-items-center gap-2">
-                            <FontAwesomeIcon icon={faFilter} className="filter-icon" />
-                            <span className="filter-label">Filter by:</span>
-                            <div className="d-flex align-items-center gap-2 flex-wrap">
-                                {selectedPatterns.map((pattern, index) => (
-                                    <span key={index} className="pattern-badge">
-                                        {pattern}
-                                        <span className="ms-2">
-                                            <FontAwesomeIcon icon={faCircleXmark} className="fa-circle-xmark" onClick={() => updatePatternFilter(pattern)} />
-                                        </span>
-                                    </span>
-
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                )}
-                */}
-
             </div>
             <div className="section-content-wrapper">
                 <div className="file-list d-flex flex-column">
@@ -217,7 +250,7 @@ function CodeFilesSection({ codeFiles, pattern, selectedPatterns, patternFilters
                                             ) : file.status === FileStatus.READY ? (
                                                 <>
                                                     <FontAwesomeIcon icon={faCheckCircle} className="status-icon" />
-                                                    <span className="status-text">Ready to Match</span>
+                                                    <span className="status-text">Validated</span>
                                                 </>
                                             ) : file.status === FileStatus.PENDING ? (
                                                 <>
@@ -238,14 +271,43 @@ function CodeFilesSection({ codeFiles, pattern, selectedPatterns, patternFilters
                                     postfixTooltip={!isMatchDone ? "Remove file" : undefined}
                                     expandedContent={
                                         <div className="file-details">
-                                            <p className="m-0"><strong>File:</strong> {file.filename}</p>
-                                            <p className="m-0"><strong>Status:</strong> {file.status}</p>
+                                            <div className="file-details-meta">
+                                                <p className="m-0"><strong>File:</strong> {file.filename}</p>
+                                                <p className="m-0"><strong>Status:</strong> {file.status}</p>
+                                            </div>
 
-                                            {file.validationError != null ? (
-                                                <p className="m-0"><strong>Validation Error:</strong> {file.validationError.msg}</p>
-                                            ) : (
-                                                <div></div>
+                                            {file.validationError != null && (
+                                                <ValidationErrorCallout error={file.validationError} />
                                             )}
+
+                                            <ExpandableCard
+                                                icon={faCode}
+                                                title="View code"
+                                                ableToOpen={true}
+                                                className="file-code-card"
+                                                headerClassName="py-2"
+                                                expandedContent={
+                                                    <div className="file-code-view-wrapper">
+                                                        <CodeMirror
+                                                            value={file.code}
+                                                            extensions={[
+                                                                ...getLangExtension(file.lang),
+                                                                ...(file.validationError?.line != null && file.validationError.line >= 1
+                                                                    ? [highlightErrorLine(file.validationError.line)]
+                                                                    : []),
+                                                            ]}
+                                                            editable={false}
+                                                            readOnly={true}
+                                                            basicSetup={{
+                                                                lineNumbers: true,
+                                                                foldGutter: false,
+                                                                highlightActiveLine: false,
+                                                                highlightSelectionMatches: false,
+                                                            }}
+                                                        />
+                                                    </div>
+                                                }
+                                            />
 
                                             {isMatchDone && !_.isNil(pattern) && (
                                                 <div className="pt-3 pb-3">

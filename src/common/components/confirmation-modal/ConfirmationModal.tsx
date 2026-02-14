@@ -5,7 +5,7 @@ import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 import './ConfirmationModal.css';
 
 interface ConfirmationModalProps {
-    question: string | React.ReactNode;
+    questionContent: string | React.ReactNode;
     onApprove: () => void;
     onDecline?: () => void;
     isOpen: boolean;
@@ -14,7 +14,7 @@ interface ConfirmationModalProps {
 }
 
 function ConfirmationModal({
-    question,
+    questionContent,
     onApprove,
     onDecline,
     isOpen,
@@ -53,7 +53,7 @@ function ConfirmationModal({
                     <h3 className="confirmation-modal-title">Are you sure?</h3>
                 </div>
                 <div className="confirmation-modal-question">
-                    {question}
+                    {questionContent}
                 </div>
                 <div className="confirmation-modal-actions">
                     <button

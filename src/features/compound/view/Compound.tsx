@@ -255,14 +255,14 @@ function Compound() {
 
             <ConfirmationModal
                 isOpen={isMatchModalOpen}
-                question="This action will start the matching process."
+                questionContent="This action will start the matching process and you will not be able to upload new code files."
                 onApprove={handleMatchApprove}
                 onRequestClose={() => setIsMatchModalOpen(false)}
             />
 
             <ConfirmationModal
                 isOpen={isResetModalOpen}
-                question="This action will clear all match results and reset the state."
+                questionContent="This action will clear all match results and reset the state."
                 onApprove={handleResetApprove}
                 onRequestClose={() => setIsResetModalOpen(false)}
                 isConfirmPositive={false}
@@ -270,7 +270,7 @@ function Compound() {
 
             <ConfirmationModal
                 isOpen={isResetPatternModalOpen}
-                question="This action will clear the imported pattern."
+                questionContent="This action will clear the imported pattern."
                 onApprove={handleResetPatternApprove}
                 onRequestClose={() => setIsResetPatternModalOpen(false)}
                 isConfirmPositive={false}
@@ -278,7 +278,7 @@ function Compound() {
 
             <ConfirmationModal
                 isOpen={isResetCodeModalOpen}
-                question="This action will remove all imported code files."
+                questionContent="This action will remove all imported code files."
                 onApprove={handleResetCodeApprove}
                 onRequestClose={() => setIsResetCodeModalOpen(false)}
                 isConfirmPositive={false}

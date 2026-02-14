@@ -1,0 +1,43 @@
+.cytoscape-container {
+    height: 100%;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.cytoscape-controls {
+    flex-shrink: 0;
+    padding: 8px;
+    background: #f9fafb;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    gap: 8px;
+}
+
+.cytoscape-label {
+    font-size: 0.875rem;
+    color: #374151;
+    white-space: nowrap;
+}
+
+.cytoscape-select {
+    font-size: 0.875rem;
+    min-width: 150px;
+}
+
+.cytoscape-btn {
+    font-size: 0.875rem;
+    padding: 0.375rem 0.75rem;
+    white-space: nowrap;
+}
+
+.cytoscape-graph {
+    flex: 1;
+    min-height: 0;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #ffffff;
+    overflow: hidden;
+}
+

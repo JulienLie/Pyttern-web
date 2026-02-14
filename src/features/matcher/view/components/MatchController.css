@@ -1,0 +1,192 @@
+.match-controller {
+    width: 100%;
+    padding: 0;
+}
+
+.match-controller-buttons {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.match-controller-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    min-width: 44px;
+    height: 44px;
+}
+
+.match-controller-btn-primary {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.match-controller-btn-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.match-controller-btn-primary:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.match-controller-btn-primary:disabled {
+    background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.6;
+}
+
+.match-controller-btn-secondary {
+    background: #ffffff;
+    color: #374151;
+    border: 1.5px solid #e5e7eb;
+}
+
+.match-controller-btn-secondary:hover:not(:disabled) {
+    background: #f9fafb;
+    border-color: #3b82f6;
+    color: #3b82f6;
+    transform: translateY(-1px);
+}
+
+.match-controller-btn-secondary:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.match-controller-btn-secondary:disabled {
+    background: #f3f4f6;
+    color: #9ca3af;
+    border-color: #e5e7eb;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.play-icon {
+    font-size: 12px;
+}
+
+.match-controller-step-input {
+    display: flex;
+    align-items: center;
+    min-width: 120px;
+}
+
+.match-controller-step-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    margin: 0;
+}
+
+.match-controller-number-input {
+    width: 60px;
+    padding: 6px 8px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 14px;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.match-controller-number-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.match-controller-number-input:disabled {
+    background: #f3f4f6;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.match-controller-step-max {
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.match-controller-slider-wrapper {
+    flex: 1;
+    min-width: 200px;
+    max-width: 500px;
+    position: relative;
+}
+
+.match-controller-slider {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: #e5e7eb;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: background 0.2s ease;
+}
+
+.match-controller-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #3b82f6;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+    transition: all 0.2s ease;
+}
+
+.match-controller-slider::-webkit-slider-thumb:hover {
+    background: #2563eb;
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.5);
+}
+
+.match-controller-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #3b82f6;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+    transition: all 0.2s ease;
+}
+
+.match-controller-slider::-moz-range-thumb:hover {
+    background: #2563eb;
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.5);
+}
+
+.match-controller-slider:disabled {
+    background: #f3f4f6;
+    cursor: not-allowed;
+}
+
+.match-controller-slider:disabled::-webkit-slider-thumb {
+    background: #9ca3af;
+    cursor: not-allowed;
+}
+
+.match-controller-slider:disabled::-moz-range-thumb {
+    background: #9ca3af;
+    cursor: not-allowed;
+}
+

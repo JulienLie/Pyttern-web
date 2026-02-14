@@ -1,4 +1,4 @@
-import { CodeFile, MatchRequest, MatchResponse, MatchType, PatternMatchStatus } from "./compoundModels.ts";
+import { CodeFile, CompoundPattern, MatchRequest, MatchResponse } from "./compoundModels.ts";
 import { ValidationRequest, ValidationResponse } from "./compoundModels.ts";
 
 export async function validateCodeFiles(codeFiles: CodeFile[]): Promise<ValidationResponse> {
@@ -35,10 +35,44 @@ export async function validateCodeFiles(codeFiles: CodeFile[]): Promise<Validati
     return responseData as ValidationResponse;
 }
 
-export async function match(matchRequest: MatchRequest): Promise<MatchResponse> {
+export async function match(compoundPattern: CompoundPattern, codeFiles: CodeFile[]): Promise<MatchResponse> {
     // TODO: Implement the match API call
 
+    const requestBody: MatchRequest = {
+        compoundPattern: compoundPattern,
+        codes: [],
+        lang: codeFiles[0].lang || '',
+    };
+
+    codeFiles.forEach(file => {
+        requestBody.codes.push({
+            filename: file.filename,
+            code: file.code,
+        });
+    });
+
+    const response = await fetch('/api/batch_match', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+    });
+
+    // TODO: Delete this after testing!!!
+    await new Promise(resolve => setTimeout(resolve, 3000));
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const responseData = await response.json();
+    console.log('Match Response -> ', responseData);
+
+    return responseData as MatchResponse;
+
     // TODO: Delete this after update!
+    /*
     await new Promise(resolve => setTimeout(resolve, 3000));
 
     const responseData: MatchResponse = {
@@ -129,4 +163,5 @@ export async function match(matchRequest: MatchRequest): Promise<MatchResponse> 
     }
 
     return responseData;
+    */
 }

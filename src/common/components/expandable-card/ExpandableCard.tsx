@@ -41,10 +41,22 @@ function ExpandableCard({
     const contentRef = useRef<HTMLDivElement>(null);
     const [contentHeight, setContentHeight] = useState<number>(0);
 
+    // Initial measure when expandedContent is set
     useEffect(() => {
         if (contentRef.current) {
             setContentHeight(contentRef.current.scrollHeight);
         }
+    }, [expandedContent]);
+
+    // Re-measure when content size changes (e.g. nested expandable card opens/closes)
+    useEffect(() => {
+        const el = contentRef.current;
+        if (!el) return;
+        const observer = new ResizeObserver(() => {
+            setContentHeight(el.scrollHeight);
+        });
+        observer.observe(el);
+        return () => observer.disconnect();
     }, [expandedContent]);
 
     const handleCardClick = () => {

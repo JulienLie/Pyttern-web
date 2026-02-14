@@ -62,9 +62,9 @@ export const startMatch = createAsyncThunk<
     'compound/startMatch',
     async (_, { dispatch, getState }) => {
         dispatch(setAppLoaderOn());
+        const { compound } = getState();
 
         try {
-            const { compound } = getState();
             const codeFiles: CodeFile[] = compound.codeFiles;
             const compoundPattern = compound.compoundPattern;
 
@@ -75,7 +75,7 @@ export const startMatch = createAsyncThunk<
             return await compoundService.startMatch(compoundPattern, codeFiles);
         } catch (error) {
             console.error("Error starting match:", error);
-            return [];
+            return compound.codeFiles;
         }
         finally {
             dispatch(setAppLoaderOff());

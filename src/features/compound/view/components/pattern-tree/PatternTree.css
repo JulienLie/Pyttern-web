@@ -1,0 +1,255 @@
+.pattern-tree-container {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    max-width: 100%;
+    max-height: 100%; 
+    overflow-x: auto; 
+    overflow-y: auto; 
+    box-sizing: border-box; 
+    scroll-behavior: smooth;
+    scrollbar-gutter: stable;
+    scrollbar-width: auto;
+    scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+.pattern-tree {
+    font-family: 'Courier New', monospace;
+    font-size: 16px;
+    line-height: 2.0;
+    animation: fadeIn 0.4s ease-out;
+    width: fit-content; /* Allow tree to expand horizontally as needed */
+    min-width: 100%; /* Ensure it's at least as wide as container */
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tree-node,
+.tree-branch {
+    position: relative;
+    transition: all 0.2s ease;
+    display: block; /* Ensure block-level display for proper containment */
+    width: 100%; /* Take full width of parent */
+    min-width: 0; /* Allow shrinking if needed */
+}
+
+.tree-children {
+    padding-left: 36px;
+    width: 100%; /* Ensure children respect parent width */
+    box-sizing: border-box; /* Include padding in width calculation */
+}
+
+.node-text {
+    color: #1f2937;
+    font-weight: 500;
+    padding: 3px 11px;
+    margin: 2px;
+    border-radius: 5px;
+}
+
+
+.node-text:hover {
+    cursor: default !important;
+}
+
+.tree-leaf.clickable:hover {
+    cursor: pointer;
+}
+
+.tree-leaf.non-clickable {
+    cursor: default;
+}
+
+.node-text.root {
+    font-size: 18px;
+    font-weight: 700;
+    color: #184788;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border: 2px solid #bae6fd;
+    padding: 7px 14px;
+    margin-bottom: 7px;
+}
+
+.pattern-icon {
+    font-size: 20px;
+}
+
+.node-text.keyword {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.keyword-and {
+    color: #2563eb;
+    background-color: #dbeafe;
+    border: 1px solid #93c5fd;
+}
+
+.keyword-or {
+    color: #f59e0b;
+    background-color: #fef3c7;
+    border: 1px solid #fde68a;
+}
+
+.keyword-not {
+    color: #ef4444;
+    background-color: #fee2e2;
+    border: 1px solid #fecaca;
+}
+
+
+
+
+.tree-leaf.clickable:hover {
+    transform: translateX(7px);
+}
+
+.leaf-icon {
+    color: #3b82f6;
+    font-size: 13px;
+    margin-right: 5px;
+    transition: color 0.2s ease;
+}
+
+.leaf-icon-matched {
+    color: #10b981; /* Green for matched */
+}
+
+.leaf-icon-not-matched {
+    color: #ef4444; /* Red for not matched */
+}
+
+.leaf-icon-not-checked {
+    color: #6b7280; /* Gray for not checked */
+}
+
+.tree-leaf {
+    display: flex; /* Use flexbox for better layout control */
+    align-items: center; /* Vertically align children */
+    flex-wrap: nowrap; /* Prevent wrapping to maintain structure */
+    transition: all 0.2s ease;
+    margin: 9px;
+}
+
+.leaf-text {
+    color: #1f2937;
+    font-weight: 500;
+    background-color: #f9fafb;
+    padding: 4px 11px;
+    border-radius: 4px;
+    border: 1px solid #e5e7eb;
+    transition: all 0.2s ease;
+    display: inline-block; /* Allow proper sizing */
+    white-space: nowrap; /* Prevent text from wrapping within the label */
+    box-sizing: border-box; /* Include padding in width */
+    vertical-align: middle; /* Align properly with icon */
+    max-width: none; /* Allow text to expand as needed */
+}
+
+.tree-leaf.clickable:hover .leaf-text {
+    background-color: #eff6ff;
+    border-color: #3b82f6;
+    color: #1e40af;
+}
+
+.leaf-text.matched {
+    background-color: #ecfdf5 !important;
+    border-color: #10b981 !important;
+    color: #047857 !important;
+}
+
+.leaf-text.selected {
+    background-color: #dbeafe !important;
+    border-color: #3b82f6 !important;
+    color: #1e40af !important;
+}
+
+.tree-leaf .leaf-icon-matched {
+    color: #10b981 !important;
+}
+
+.leaf-text.not-matched {
+    background-color: #fee2e2 !important;
+    border-color: #ef4444 !important;
+    color: #991b1b !important;
+}
+
+.tree-leaf .leaf-icon-not-matched {
+    color: #ef4444 !important;
+}
+
+.leaf-text.not-checked {
+    background-color: #f9fafb !important;
+    border-color: #b3b5b7 !important;
+    color: #6b7280 !important;
+}
+
+.tree-leaf .leaf-icon-not-checked {
+    color: #6b7280 !important;
+}
+
+.leaf-icon-not-validated {
+    color: #ef4444 !important;
+}
+
+.leaf-icon-spinning {
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.tree-leaf.not-validated .leaf-text,
+.leaf-text.not-validated {
+    background-color: #fef2f2 !important;
+    border-color: #ef4444 !important;
+    color: #991b1b !important;
+}
+
+.tree-leaf.not-validated .leaf-icon-not-validated {
+    color: #ef4444 !important;
+}
+
+.branch-line::before {
+    content: '└── ';
+    color: #d1d5db;
+    margin-right: 7px;
+    font-weight: 400;
+}
+
+/* Custom scrollbar styling for pattern-tree-container */
+.pattern-tree-container::-webkit-scrollbar {
+    width: 11px;
+    height: 11px;
+    -webkit-appearance: none;
+}
+
+.pattern-tree-container::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 6px;
+}
+
+.pattern-tree-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+    transition: background 0.2s;
+    min-height: 20px;
+}
+
+.pattern-tree-container::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+

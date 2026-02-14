@@ -1,6 +1,6 @@
 import './MatchFooter.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlay, faRotateRight } from '@fortawesome/free-solid-svg-icons';
+import { faFileCsv, faPlay, faRotateRight } from '@fortawesome/free-solid-svg-icons';
 
 export interface MatchFooterProps {
     isMatchDone: boolean;
@@ -8,9 +8,10 @@ export interface MatchFooterProps {
     isPatternReadyToMatch: boolean;
     onMatch: () => void;
     onResetMatch: () => void;
+    onExportCsv?: () => void;
 }
 
-function MatchFooter({ isMatchDone, isFilesReadyToMatch, isPatternReadyToMatch, onMatch, onResetMatch }: MatchFooterProps) {
+function MatchFooter({ isMatchDone, isFilesReadyToMatch, isPatternReadyToMatch, onMatch, onResetMatch, onExportCsv }: MatchFooterProps) {
     console.log('isFilesReadyToMatch', isFilesReadyToMatch);
     console.log('isPatternReadyToMatch', isPatternReadyToMatch);
 
@@ -22,14 +23,21 @@ function MatchFooter({ isMatchDone, isFilesReadyToMatch, isPatternReadyToMatch, 
                     RESET
                 </button>
             )}
-            <button
-                className="match-footer__btn-match d-flex align-items-center gap-2"
-                onClick={onMatch}
-                disabled={(!(isFilesReadyToMatch && isPatternReadyToMatch)) || isMatchDone}
-            >
-                <FontAwesomeIcon icon={faPlay} className="match-footer__play-icon" />
-                MATCH
-            </button>
+            {isMatchDone && onExportCsv ? (
+                <button className="match-footer__btn-export d-flex align-items-center gap-2" onClick={onExportCsv}>
+                    <FontAwesomeIcon icon={faFileCsv} />
+                    Export To CSV
+                </button>
+            ) : (
+                <button
+                    className="match-footer__btn-match d-flex align-items-center gap-2"
+                    onClick={onMatch}
+                    disabled={!(isFilesReadyToMatch && isPatternReadyToMatch)}
+                >
+                    <FontAwesomeIcon icon={faPlay} className="match-footer__play-icon" />
+                    MATCH
+                </button>
+            )}
         </div>
     );
 }

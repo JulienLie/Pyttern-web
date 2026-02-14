@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from '../../../common/hooks.ts';
 import { setCompoundPattern, setCodeFiles, resetCompoundPattern, resetState } from '../compoundSlice.ts';
 import { startMatch, validateCodeFiles, validatePatterns } from '../compoundThunks.ts';
 import { FileStatus } from '../compoundModels.ts';
+import { buildMatchResultsCsv, downloadCsv } from '../csvUtils.ts';
 import { useState, useRef, useEffect, useCallback } from 'react';
 
 function Compound() {
@@ -131,6 +132,12 @@ function Compound() {
         setIsFilterPanelOpen(false);
     };
 
+    const handleExportCsv = () => {
+        if (!compoundPattern || codeFiles.length === 0) return;
+        const csv = buildMatchResultsCsv(codeFiles, compoundPattern.name);
+        downloadCsv(csv, `${compoundPattern.name}-results.csv`);
+    };
+
     const handleMouseMove = useCallback((e: MouseEvent) => {
         if (!containerRef.current) return;
 
@@ -245,6 +252,7 @@ function Compound() {
                 isPatternReadyToMatch={isPatternReadyToMatch}
                 onMatch={handleMatch}
                 onResetMatch={handleResetMatch}
+                onExportCsv={handleExportCsv}
             />
 
             <ConfirmationModal

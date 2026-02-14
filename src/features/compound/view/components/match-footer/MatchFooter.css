@@ -63,9 +63,28 @@
 }
 
 .match-footer__btn-reset:hover {
-    transform: translateY(-3px) scale(1.03);
+    background-color: #dc2626;
 }
 
-.match-footer__btn-reset:active {
+.match-footer__btn-export {
+    padding: 14px 36px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    border-radius: 11px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 2px 22px rgba(16, 185, 129, 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.5px;
+}
+
+.match-footer__btn-export:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    
+}
+
+.match-footer__btn-export:active {
     transform: translateY(-1px) scale(1.02);
 }

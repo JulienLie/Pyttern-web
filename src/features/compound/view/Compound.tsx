@@ -246,6 +246,7 @@ function Compound() {
             />
 
             <MatchFooter
+                codeFiles={codeFiles}
                 isMatchDone={isMatchDone}
                 isFilesReadyToMatch={isFilesReadyToMatch}
                 isPatternReadyToMatch={isPatternReadyToMatch}

@@ -6,12 +6,12 @@
 }
 
 .match-footer__btn-match {
-    padding: 14px 36px;
+    padding: 12px 30px;
     background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     color: white;
     border: none;
-    border-radius: 11px;
-    font-size: 16px;
+    border-radius: 10px;
+    font-size: 15px;
     font-weight: 700;
     cursor: pointer;
     box-shadow: 0 2px 22px rgba(16, 185, 129, 0.4);
@@ -41,7 +41,7 @@
 }
 
 .match-footer__play-icon {
-    font-size: 14px;
+    font-size: 13px;
 }
 
 .match-footer__btn-match:hover .match-footer__play-icon {
@@ -50,12 +50,12 @@
 }
 
 .match-footer__btn-reset {
-    padding: 14px 36px;
+    padding: 12px 30px;
     background-color: #ef4444;
     color: white;
     border: none;
-    border-radius: 11px;
-    font-size: 16px;
+    border-radius: 10px;
+    font-size: 15px;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -67,12 +67,12 @@
 }
 
 .match-footer__btn-export {
-    padding: 14px 36px;
+    padding: 12px 30px;
     background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     color: white;
     border: none;
-    border-radius: 11px;
-    font-size: 16px;
+    border-radius: 10px;
+    font-size: 15px;
     font-weight: 700;
     cursor: pointer;
     box-shadow: 0 2px 22px rgba(16, 185, 129, 0.4);

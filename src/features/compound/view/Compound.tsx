@@ -25,6 +25,7 @@ function Compound() {
     const containerRef = useRef<HTMLDivElement>(null);
     const dividerRef = useRef<HTMLDivElement>(null);
     const rafRef = useRef<number | null>(null);
+    const positionRef = useRef(50);
 
     const handleAddCode = async () => {
         try {
@@ -141,23 +142,22 @@ function Compound() {
     const handleMouseMove = useCallback((e: MouseEvent) => {
         if (!containerRef.current) return;
 
-        // Cancel any pending animation frame
         if (rafRef.current !== null) {
             cancelAnimationFrame(rafRef.current);
         }
 
-        // Use requestAnimationFrame for smooth updates
         rafRef.current = requestAnimationFrame(() => {
             const containerRect = containerRef.current!.getBoundingClientRect();
             const newPosition = ((e.clientX - containerRect.left) / containerRect.width) * 100;
-            
-            // Constrain between 20% and 80% to prevent sections from becoming too small
             const constrainedPosition = Math.max(20, Math.min(80, newPosition));
-            setDividerPosition(constrainedPosition);
+
+            positionRef.current = constrainedPosition;
+            containerRef.current!.style.setProperty('--compound-divider-position', String(constrainedPosition));
         });
     }, []);
 
     const handleMouseUp = useCallback(() => {
+        setDividerPosition(positionRef.current);
         setIsDragging(false);
         if (rafRef.current !== null) {
             cancelAnimationFrame(rafRef.current);
@@ -200,11 +200,11 @@ function Compound() {
         <div className="compound-container d-flex flex-column ps-4 pe-4 pt-4">
             <div 
                 ref={containerRef}
-                className="compound-content d-flex flex-1 gap-4 overflow-hidden position-relative"
+                className={`compound-content d-flex flex-1 gap-4 overflow-hidden position-relative ${isDragging ? 'compound-dragging' : ''}`}
+                style={{ ['--compound-divider-position' as string]: dividerPosition }}
             >
                 <div 
                     className={`compound-left d-flex flex-column gap-3 ${isDragging ? 'no-transition' : ''}`}
-                    style={{ width: `${dividerPosition}%`, minWidth: '200px' }}
                 >
                     <CompoundPatternSection
                         pattern={compoundPattern}
@@ -222,7 +222,6 @@ function Compound() {
 
                 <div 
                     className={`compound-right d-flex flex-column gap-3 ${isFilterPanelOpen ? 'shift-for-filter-panel' : ''} ${isDragging ? 'no-transition' : ''}`}
-                    style={{ width: `${100 - dividerPosition}%`, minWidth: '200px' }}
                 >
                     <CodeFilesSection
                         codeFiles={codeFiles}

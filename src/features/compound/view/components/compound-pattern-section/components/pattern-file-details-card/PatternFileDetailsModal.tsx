@@ -37,6 +37,7 @@ function PatternFileDetailsModal({ isOpen, onRequestClose, patternFile }: Patter
                 className="pattern-file-details-modal"
                 overlayClassName="pattern-file-details-modal-overlay"
                 ariaHideApp={false}
+                closeTimeoutMS={200}
             >
                 <div className="pattern-file-details-modal-content" />
             </Modal>
@@ -50,10 +51,11 @@ function PatternFileDetailsModal({ isOpen, onRequestClose, patternFile }: Patter
             className="pattern-file-details-modal"
             overlayClassName="pattern-file-details-modal-overlay"
             ariaHideApp={false}
+            closeTimeoutMS={200}
         >
             <div className="pattern-file-details-modal-content">
                 <div className="pattern-file-details-modal-header">
-                    <h3 className="pattern-file-details-modal-title">Pattern file details</h3>
+                    <h3 className="pattern-file-details-modal-title">Pyttern File</h3>
                     <span className="pattern-file-details-modal-filename">{patternFile.filename}</span>
                     <button
                         type="button"

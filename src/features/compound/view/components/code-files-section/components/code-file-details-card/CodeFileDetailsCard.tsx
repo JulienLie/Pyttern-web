@@ -117,15 +117,24 @@ function CodeFileDetailsCard({
                         </p>
                         <p className="m-0">
                             <strong>Status:</strong>{' '}
-                            {file.status === FileStatus.VALIDATED
-                                ? 'Validated'
-                                : file.status === FileStatus.NOT_VALIDATED
-                                  ? 'Not Validated'
-                                  : file.status === FileStatus.PENDING
-                                    ? 'Pending'
-                                    : file.status === FileStatus.ERROR
-                                      ? 'Error'
-                                      : 'Unknown'}
+                            {(() => {
+                                switch (file.status) {
+                                    case FileStatus.VALIDATED:
+                                        return 'Validated';
+                                    case FileStatus.NOT_VALIDATED:
+                                        return 'Not Validated';
+                                    case FileStatus.PENDING:
+                                        return 'Pending';
+                                    case FileStatus.MATCHED:
+                                        return 'Matched';
+                                    case FileStatus.NOT_MATCHED:
+                                        return 'Not Matched';
+                                    case FileStatus.ERROR:
+                                        return 'Error';
+                                    default:
+                                        return 'Unknown';
+                                }
+                            })()}
                         </p>
                     </div>
 

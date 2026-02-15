@@ -9,17 +9,33 @@
     z-index: 1;
     flex: 1;
     overflow: hidden;
+    --compound-divider-position: 50;
 }
 
 .compound-left,
 .compound-right {
     animation: slideInFromSide 0.5s ease-out;
-    min-height: 0; /* Important for flex children to respect overflow */
-    max-height: 100%; /* Constrain to parent height */
+    min-height: 0;
+    max-height: 100%;
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* Prevent scrolling on container itself */
+    overflow: hidden;
     transition: width 0.1s ease-out;
+    min-width: 200px;
+}
+
+.compound-left {
+    width: calc(var(--compound-divider-position) * 1%);
+}
+
+.compound-right {
+    width: calc((100 - var(--compound-divider-position)) * 1%);
+}
+
+.compound-content.compound-dragging .compound-left,
+.compound-content.compound-dragging .compound-right {
+    will-change: width;
+    contain: layout;
 }
 
 .compound-left.no-transition,

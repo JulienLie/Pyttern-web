@@ -10,9 +10,10 @@ import {
     faCircleExclamation,
     faCircleInfo,
 } from '@fortawesome/free-solid-svg-icons';
-import { CodeFile, FileStatus } from '../../../compoundModels';
+import { CodeFile, CompoundPattern, FileStatus } from '../../../compoundModels';
 
 export interface MatchFooterProps {
+    compoundPattern?: CompoundPattern | null;
     codeFiles: CodeFile[];
     isMatchDone: boolean;
     isFilesReadyToMatch: boolean;
@@ -22,7 +23,7 @@ export interface MatchFooterProps {
     onExportCsv?: () => void;
 }
 
-function MatchFooter({ codeFiles, isMatchDone, isFilesReadyToMatch, isPatternReadyToMatch, onMatch, onResetMatch, onExportCsv }: MatchFooterProps) {
+function MatchFooter({ compoundPattern, codeFiles, isMatchDone, isFilesReadyToMatch, isPatternReadyToMatch, onMatch, onResetMatch, onExportCsv }: MatchFooterProps) {
     const validatedCount = codeFiles.filter((f) => f.status === FileStatus.VALIDATED).length;
     const notValidatedCount = codeFiles.filter((f) => f.status === FileStatus.NOT_VALIDATED || f.status === FileStatus.PENDING).length;
     const matchedCount = codeFiles.filter((f) => f.status === FileStatus.MATCHED).length;
@@ -31,14 +32,15 @@ function MatchFooter({ codeFiles, isMatchDone, isFilesReadyToMatch, isPatternRea
     const errorCount = codeFiles.filter((f) => f.status === FileStatus.ERROR).length;
 
     const hasAnyFiles = codeFiles.length > 0;
+    const hasPattern = compoundPattern !== null;
 
     return (
         <div className="match-footer position-fixed bottom-0 start-0 end-0 d-flex justify-content-between align-items-center p-3 px-5 gap-3">
             <div className="match-footer__summary">
-                {!hasAnyFiles ? (
+                {!hasAnyFiles && !hasPattern ? (
                     <div className="match-footer__summary-info">
                         <FontAwesomeIcon icon={faCircleInfo} className="match-footer__summary-info-icon" />
-                        <span>Please upload code files to validate</span>
+                        <span>Please import a compound pattern and upload code files to validate</span>
                     </div>
                 ) : (
                 <>
@@ -112,10 +114,16 @@ function MatchFooter({ codeFiles, isMatchDone, isFilesReadyToMatch, isPatternRea
                 </button>
             ) : (
                 <>
-                    {!isPatternReadyToMatch && (
+                    {!isPatternReadyToMatch && hasPattern && (
                         <div className="match-footer__pattern-warning d-flex align-items-center gap-2">
                             <FontAwesomeIcon icon={faExclamationTriangle} className="match-footer__pattern-warning-icon" />
                             <span>Every pattern must be validated for matching</span>
+                        </div>
+                    )}
+                    {hasAnyFiles && !hasPattern && (
+                        <div className="match-footer__pattern-warning d-flex align-items-center gap-2">
+                            <FontAwesomeIcon icon={faExclamationTriangle} className="match-footer__pattern-warning-icon" />
+                            <span>Please import a compound pattern to start matching</span>
                         </div>
                     )}
                     <button

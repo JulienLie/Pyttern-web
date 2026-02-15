@@ -60,7 +60,7 @@ function CompoundPatternSection({ pattern, isMatchDone, onImportPattern, onReset
                         <FontAwesomeIcon icon={faFolderTree} className="empty-icon" />
                         <p className="m-0 mb-3">No compound pattern imported yet</p>
                         <button className="btn-import-empty d-flex align-items-center gap-2" onClick={onImportPattern} disabled={isMatchDone}>
-                            <FontAwesomeIcon icon={faFileImport} /> Import Your First Pattern
+                            <FontAwesomeIcon icon={faFileImport} /> Import Your Compound Pattern
                         </button>
                     </div>
                 )}

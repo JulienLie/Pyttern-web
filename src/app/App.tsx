@@ -15,8 +15,8 @@ function App() {
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
           <Route path="/" element={<Layout />}>
-            <Route index element={<Matcher />} />
-            <Route path='compound' element={<Compound />} />
+              <Route index element={<Compound />} />
+            <Route path={'matcher'} element={<Matcher />} />
           </Route>
         </Routes>
       </Suspense>

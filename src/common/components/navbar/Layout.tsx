@@ -12,13 +12,13 @@ export default function Layout() {
           <span>Pyttern Visualizer</span>
         </div>
         <div className="navbar-links">
-          <NavLink to="/" end>
-            <FontAwesomeIcon icon={faDiagramProject} />
-            <span>Matcher</span>
-          </NavLink>
-          <NavLink to="/compound">
+          <NavLink to="/">
             <FontAwesomeIcon icon={faNetworkWired} />
             <span>Compound</span>
+          </NavLink>
+          <NavLink to="/matcher" end>
+            <FontAwesomeIcon icon={faDiagramProject} />
+            <span>Matcher</span>
           </NavLink>
         </div>
       </nav>

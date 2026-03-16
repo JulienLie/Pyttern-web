@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import './CodeFilesSection.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCode, faPlus, faRotateRight, faFile, faFilter } from '@fortawesome/free-solid-svg-icons';
+import { faCode, faPlus, faRotateRight, faFile, faFilter, faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { CodeFile, CompoundPattern, CompoundPatternElement, PatternFile, PatternsMatchResult, PatternMatchStatus, PatternFilterConfig, MatchType } from '../../../compoundModels.ts';
 
 import CodeFileDetailsCard from './components/code-file-details-card/CodeFileDetailsCard.tsx';
+import InfoModal from '../../../../../common/components/info-modal/InfoModal.tsx';
 
 interface CodeFilesSectionProps {
     codeFiles: CodeFile[];
@@ -18,6 +20,8 @@ interface CodeFilesSectionProps {
 }
 
 function CodeFilesSection({ codeFiles, pattern, selectedPatterns, patternFilters, isMatchDone, onAddCode, onResetCode, onDeleteFile, onOpenFilterPanel }: CodeFilesSectionProps) {
+    const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+
     const isPatternFile = (element: CompoundPatternElement): element is PatternFile => {
         return 'code' in element;
     };
@@ -107,6 +111,9 @@ function CodeFilesSection({ codeFiles, pattern, selectedPatterns, patternFilters
                     <h2 className="d-flex align-items-center gap-3 m-0">
                         <FontAwesomeIcon icon={faCode} className="header-icon" />
                         Code Files
+                        <button className="info-icon-btn" onClick={() => setIsInfoModalOpen(true)} title="Learn about code files">
+                            <FontAwesomeIcon icon={faCircleInfo} />
+                        </button>
                     </h2>
                     <div className="d-flex align-items-center gap-2">
                         <span className="file-count">{totalFiles} file{totalFiles !== 1 ? 's' : ''}</span>
@@ -165,6 +172,24 @@ function CodeFilesSection({ codeFiles, pattern, selectedPatterns, patternFilters
                     )}
                 </div>
             </div>
+
+            <InfoModal
+                isOpen={isInfoModalOpen}
+                onRequestClose={() => setIsInfoModalOpen(false)}
+                title="Code Files"
+                icon={faCode}
+            >
+                <p>Code files are the source files you want to analyze against your compound pattern.</p>
+                <p><strong>How to use:</strong></p>
+                <ul>
+                    <li><strong>Add</strong> code files from your file system — you can select multiple files at once</li>
+                    <li>Files are <strong>validated</strong> automatically to ensure they can be parsed correctly</li>
+                    <li>After matching, each file shows its <strong>match results</strong> per pattern — expand a file card to see details</li>
+                    <li>Use the <strong>Filter</strong> button (available after matching) to filter files by specific pattern results</li>
+                    <li>The <strong>file count</strong> in the header shows total and filtered counts</li>
+                    <li>Use the <strong>Reset</strong> button to remove all imported code files</li>
+                </ul>
+            </InfoModal>
         </div>
     );
 }

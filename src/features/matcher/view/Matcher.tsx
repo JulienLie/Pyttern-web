@@ -1,4 +1,3 @@
-import "bootstrap/dist/css/bootstrap.css"
 import './Matcher.css';
 
 import {lazy, Suspense, useRef} from "react";

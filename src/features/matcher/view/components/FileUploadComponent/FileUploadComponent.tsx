@@ -1,5 +1,4 @@
 import React, {useEffect, useRef, useState} from "react";
-import 'bootstrap/dist/css/bootstrap.css';
 import './FileUploadComponent.css';
 import './custom_highlight/pytternHighlight.css'
 import CodeMirror, { Compartment, EditorView } from "@uiw/react-codemirror";

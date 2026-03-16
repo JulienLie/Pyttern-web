@@ -1,5 +1,4 @@
 import React, {ChangeEventHandler, ReactNode, useEffect, useRef, useState} from "react";
-import 'bootstrap/dist/css/bootstrap.css';
 import {GridItemHTMLElement, GridStack, GridStackNode} from "gridstack";
 import {CytoscapeType, generateCytoscape} from "./CytoscapeComponent.helper.ts";
 import {Core} from "cytoscape";

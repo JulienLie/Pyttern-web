@@ -1,5 +1,4 @@
 import React, {PropsWithChildren} from "react";
-import 'bootstrap/dist/css/bootstrap.css';
 
 interface GridStackElementProps {
     x?: number,

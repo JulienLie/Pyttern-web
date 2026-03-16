@@ -1,4 +1,5 @@
 import { CodeFile } from './compoundModels';
+import _ from "lodash";
 
 function escapeCsvField(value: string): string {
     if (!/[\n",]/.test(value)) {
@@ -22,8 +23,14 @@ export function buildMatchResultsCsv(codeFiles: CodeFile[], compoundPatternName:
     const headerCells = ['Code File Name', compoundPatternName, ...patternColumns];
     const headerRow = headerCells.map(escapeCsvField).join(',');
 
-    const dataRows = codeFiles.map((file) => {
+    const dataRows = codeFiles.map((file: CodeFile) => {
+        const isValidationFailed: boolean = !_.isNil(file.validationError);
+        const validationError = 'validation-error';
+
         const statuses = patternColumns.map((patternKey) => {
+            if (isValidationFailed)
+                return validationError;
+
             const result = file.patternsMatchResults?.[patternKey];
             return result?.matchType ?? '';
         });
@@ -46,7 +53,7 @@ export function buildMatchResultsCsv(codeFiles: CodeFile[], compoundPatternName:
         }
          */
 
-        const cells = [file.filename, file.status, ...statuses];
+        const cells = [file.filename, isValidationFailed? validationError : file.status, ...statuses];
         return cells.map(escapeCsvField).join(',');
     });
 
@@ -54,7 +61,7 @@ export function buildMatchResultsCsv(codeFiles: CodeFile[], compoundPatternName:
 }
 
 export function downloadCsv(csv: string, filename: string): void {
-    const blob = new Blob([csv], { type: 'text/csv' });
+    const blob = new Blob([csv], {type: 'text/csv'});
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;

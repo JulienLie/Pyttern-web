@@ -17,7 +17,6 @@ import {
 import ExpandableCard from '../../../../../../../common/components/expandable-card/ExpandableCard';
 import PatternTree from '../../../pattern-tree/PatternTree';
 import _ from 'lodash';
-import { useNavigate } from 'react-router-dom';
 import ValidationErrorCard from '../../../../../../../common/components/validation-error-card/ValidationErrorCard';
 import CodeView from '../../../../../../../common/components/code-view/CodeView';
 
@@ -37,9 +36,10 @@ function CodeFileDetailsCard({
     onDeleteFile,
     getModifiedPatternForFile,
 }: CodeFileDetailsCardProps) {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const handlePatternFileClick = (patternFile: PatternFile) => {
-        navigate('/', { state: { patternCode: patternFile.code, code: '' } });
+        // navigate('/', { state: { patternCode: patternFile.code, code: '' } });
+        console.log(patternFile);
     };
 
     return (

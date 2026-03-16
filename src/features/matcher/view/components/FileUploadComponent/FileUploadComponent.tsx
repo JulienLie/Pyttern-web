@@ -7,6 +7,7 @@ import { highlightRange } from "./custom_highlight/highlightRange.ts";
 import { useAppDispatch, useAppSelector } from "../../../../../common/hooks.ts";
 import { setPatternCode, setCode as setCodeAction } from "../../../matcherSlice.ts";
 import { validateCode } from "../../../matcherThunks.ts";
+import { getLangFromFileExtension } from "../../../../../common/utils/langUtils.ts";
 
 interface FileUploadProps {
     name: string;
@@ -57,8 +58,7 @@ const FileUploadComponent: React.FC<FileUploadProps> = ({ name, pos }) => {
         const file = event.target.files?.[0];
 
         if (file) {
-            const extension: string = file.name.split('.').pop() || "";
-            setLang(extension);
+            setLang(getLangFromFileExtension(file.name));
 
             const reader = new FileReader();
             reader.onload = (e) => {

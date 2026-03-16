@@ -1,6 +1,7 @@
 import { directoryOpen, fileOpen } from 'browser-fs-access';
 import { CompoundPattern, CompoundPatternElement, PatternFile, CodeFile, FileStatus } from './compoundModels.ts';
 import * as _ from 'lodash';
+import { getLangFromFileExtension, getExtensionsForLang } from '../../common/utils/langUtils.ts';
 
 /**
  * Checks if the directory name is a valid logical operator
@@ -169,7 +170,7 @@ export const importCodeFiles = async (lang?: string): Promise<CodeFile[]> => {
         let extensions: string[] = ['.py', '.pyt', '.java'];
 
         if (!_.isNil(lang) && lang !== '') {
-            extensions = getExtensionFromFileExtension(lang);
+            extensions = getExtensionsForLang(lang);
         }
 
         const files = await fileOpen({
@@ -272,28 +273,3 @@ export const validateCompoundPatternStructure = (pattern: CompoundPattern | null
     return null;
 };
 
-
-const getLangFromFileExtension = (filename: string): string => {
-    const extension = filename.split('.').pop() || '';
-    switch (extension) {
-        case 'py':
-            return 'python';
-        case 'pyt':
-            return 'python';
-        case 'java':
-            return 'java';
-        default:
-            return '';
-    }
-};
-
-const getExtensionFromFileExtension = (lang: string): string[] => {
-    switch (lang) {
-        case 'python':
-            return ['.py', '.pyt'];
-        case "java":
-            return ['.java'];
-        default:
-            return [];
-    }
-};

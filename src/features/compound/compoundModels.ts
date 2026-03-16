@@ -45,12 +45,10 @@ export enum MatchType {
 export enum PatternMatchStatus {
     MATCHED = 'matched',
     NOT_MATCHED = 'not-matched',
-    NOT_CHECKED = 'not-checked',
 }
 
 export interface PatternFilterConfig {
     matchType: MatchType;
-    includeUnchecked: boolean;
 }
 
 export interface PatternsMatchResult {
@@ -75,7 +73,6 @@ export interface CompoundState {
 export interface UpdatePatternFilterPayload {
     patternFilename: string;
     matchType?: MatchType;
-    includeUnchecked?: boolean;
 }
 
 
@@ -109,15 +106,8 @@ export interface MatchRequest extends ValidationRequest {
     compoundPattern: CompoundPattern;
 }
 
-export interface MatchResponse {
-    [filename: string]: {
-        status: MatchType; // TODO: Check that this will be like this or like ValidationStatus
-        patternsMatchResults: PatternsMatchResult;
-        message?: {
-            line: number;
-            column: number;
-            symbol: string;
-            msg: string;
-        } | null;
-    };
-}
+export type MatchResponse = {
+    name: string;
+    match: boolean;
+    patternsMatchResults: { [patternFilename: string]: boolean };
+}[];

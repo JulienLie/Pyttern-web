@@ -1,4 +1,4 @@
-import { CodeFile, FileStatus, PatternMatchStatus } from './compoundModels';
+import { CodeFile } from './compoundModels';
 
 function escapeCsvField(value: string): string {
     if (!/[\n",]/.test(value)) {
@@ -25,10 +25,10 @@ export function buildMatchResultsCsv(codeFiles: CodeFile[], compoundPatternName:
     const dataRows = codeFiles.map((file) => {
         const statuses = patternColumns.map((patternKey) => {
             const result = file.patternsMatchResults?.[patternKey];
-            const status = result?.matchType ?? PatternMatchStatus.NOT_CHECKED;
-            return status;
+            return result?.matchType ?? '';
         });
 
+        /*
         let matchResult: string;
         switch (file.status) {
             case FileStatus.MATCHED:
@@ -44,6 +44,7 @@ export function buildMatchResultsCsv(codeFiles: CodeFile[], compoundPatternName:
                 matchResult = 'Error';
                 break;
         }
+         */
 
         const cells = [file.filename, file.status, ...statuses];
         return cells.map(escapeCsvField).join(',');

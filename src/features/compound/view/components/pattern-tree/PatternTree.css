@@ -130,10 +130,6 @@
     color: #ef4444; /* Red for not matched */
 }
 
-.leaf-icon-not-checked {
-    color: #6b7280; /* Gray for not checked */
-}
-
 .tree-leaf {
     display: flex; /* Use flexbox for better layout control */
     align-items: center; /* Vertically align children */
@@ -187,16 +183,6 @@
 
 .tree-leaf .leaf-icon-not-matched {
     color: #ef4444 !important;
-}
-
-.leaf-text.not-checked {
-    background-color: #f9fafb !important;
-    border-color: #b3b5b7 !important;
-    color: #6b7280 !important;
-}
-
-.tree-leaf .leaf-icon-not-checked {
-    color: #6b7280 !important;
 }
 
 .leaf-icon-not-validated {

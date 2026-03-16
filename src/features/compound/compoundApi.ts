@@ -1,4 +1,8 @@
-import { CodeFile, CompoundPattern, MatchRequest, MatchResponse } from "./compoundModels.ts";
+import {
+    CodeFile,
+    CompoundPattern, MatchRequest,
+    MatchResponse, MatchType, PatternMatchStatus, PatternsMatchResult,
+} from "./compoundModels.ts";
 import { ValidationRequest, ValidationResponse } from "./compoundModels.ts";
 
 export async function validateCodeFiles(codeFiles: CodeFile[]): Promise<ValidationResponse> {
@@ -23,9 +27,6 @@ export async function validateCodeFiles(codeFiles: CodeFile[]): Promise<Validati
         body: JSON.stringify(requestBody),
     });
 
-    // TODO: Delete this after testing!!!
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
     if (!response.ok) {
         const message = response.status >= 500
             ? 'Server error. Please try again later.'
@@ -40,7 +41,13 @@ export async function validateCodeFiles(codeFiles: CodeFile[]): Promise<Validati
     return responseData as ValidationResponse;
 }
 
-export async function match(compoundPattern: CompoundPattern, codeFiles: CodeFile[]): Promise<MatchResponse> {
+export interface TransformedMatchResult {
+    status: MatchType;
+    patternsMatchResults: PatternsMatchResult;
+}
+
+export async function match(compoundPattern: CompoundPattern, codeFiles: CodeFile[]): Promise<Record<string, TransformedMatchResult>> {
+
     const requestBody: MatchRequest = {
         compoundPattern: compoundPattern,
         codes: [],
@@ -62,9 +69,6 @@ export async function match(compoundPattern: CompoundPattern, codeFiles: CodeFil
         body: JSON.stringify(requestBody),
     });
 
-    // TODO: Delete this after testing!!!
-    await new Promise(resolve => setTimeout(resolve, 3000));
-
     if (!response.ok) {
         const message = response.status >= 500
             ? 'Server error. Please try again later.'
@@ -74,102 +78,23 @@ export async function match(compoundPattern: CompoundPattern, codeFiles: CodeFil
         throw new Error(message);
     }
 
-    const responseData = await response.json();
+    const responseData: MatchResponse = await response.json();
     console.log('Match Response -> ', responseData);
 
-    return responseData as MatchResponse;
-
-    // TODO: Delete this after update!
-    /*
-    await new Promise(resolve => setTimeout(resolve, 3000));
-
-    const responseData: MatchResponse = {
-        "code1.py": {
-            status: MatchType.MATCH,
-            patternsMatchResults: {
-                "pattern3.py": {
-                    matchType: PatternMatchStatus.NOT_MATCHED
-                },
-                "pattern2.py": {
-                    matchType: PatternMatchStatus.NOT_CHECKED
-                },
-                "pattern1.py": {
-                    matchType: PatternMatchStatus.MATCHED
-                },
-            }
-        },
-        "code2.py": {
-            status: MatchType.NOT_MATCH,
-            patternsMatchResults: {
-                "pattern3.py": {
-                    matchType: PatternMatchStatus.MATCHED
-                },
-                "pattern2.py": {
-                    matchType: PatternMatchStatus.NOT_MATCHED
-                },
-                "pattern1.py": {
-                    matchType: PatternMatchStatus.NOT_CHECKED
-                },
-            }
-        },
-        "code3.py": {
-            status: MatchType.MATCH,
-            patternsMatchResults: {
-                "pattern3.py": {
-                    matchType: PatternMatchStatus.MATCHED
-                },
-                "pattern2.py": {
-                    matchType: PatternMatchStatus.MATCHED
-                },
-                "pattern1.py": {
-                    matchType: PatternMatchStatus.MATCHED
-                },
-            }
-        },
-        "code4.py": {
-            status: MatchType.NOT_MATCH,
-            patternsMatchResults: {
-                "pattern3.py": {
-                    matchType: PatternMatchStatus.NOT_MATCHED
-                },
-                "pattern2.py": {
-                    matchType: PatternMatchStatus.NOT_CHECKED
-                },
-                "pattern1.py": {
-                    matchType: PatternMatchStatus.NOT_MATCHED
-                },
-            }
-        },
-        "code5.py": {
-            status: MatchType.NOT_MATCH,
-            patternsMatchResults: {
-                "pattern3.py": {
-                    matchType: PatternMatchStatus.MATCHED
-                },
-                "pattern2.py": {
-                    matchType: PatternMatchStatus.MATCHED
-                },
-                "pattern1.py": {
-                    matchType: PatternMatchStatus.NOT_MATCHED
-                },
-            }
-        },
-        "code6.py": {
-            status: MatchType.MATCH,
-            patternsMatchResults: {
-                "pattern3.py": {
-                    matchType: PatternMatchStatus.NOT_MATCHED
-                },
-                "pattern2.py": {
-                    matchType: PatternMatchStatus.NOT_CHECKED
-                },
-                "pattern1.py": {
-                    matchType: PatternMatchStatus.MATCHED
-                },
-            }
-        },
+    // Transform array response into object keyed by filename
+    const transformed: Record<string, TransformedMatchResult> = {};
+    for (const item of responseData) {
+        const patternsMatchResults: PatternsMatchResult = {};
+        for (const [patternName, matched] of Object.entries(item.patternsMatchResults)) {
+            patternsMatchResults[patternName] = {
+                matchType: matched ? PatternMatchStatus.MATCHED : PatternMatchStatus.NOT_MATCHED,
+            };
+        }
+        transformed[item.name] = {
+            status: item.match ? MatchType.MATCH : MatchType.NOT_MATCH,
+            patternsMatchResults,
+        };
     }
 
-    return responseData;
-    */
+    return transformed;
 }

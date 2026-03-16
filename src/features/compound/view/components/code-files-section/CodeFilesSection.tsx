@@ -2,6 +2,7 @@ import './CodeFilesSection.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCode, faPlus, faRotateRight, faFile, faFilter } from '@fortawesome/free-solid-svg-icons';
 import { CodeFile, CompoundPattern, CompoundPatternElement, PatternFile, PatternsMatchResult, PatternMatchStatus, PatternFilterConfig, MatchType } from '../../../compoundModels.ts';
+
 import CodeFileDetailsCard from './components/code-file-details-card/CodeFileDetailsCard.tsx';
 
 interface CodeFilesSectionProps {
@@ -40,14 +41,12 @@ function CodeFilesSection({ codeFiles, pattern, selectedPatterns, patternFilters
                     }
 
                     const patternMatchResult = file.patternsMatchResults?.[patternFilename];
-                    const matchStatus = patternMatchResult?.matchType || PatternMatchStatus.NOT_CHECKED;
+                    const matchStatus = patternMatchResult?.matchType;
 
                     if (filterConfig.matchType === MatchType.MATCH) {
-                        return matchStatus === PatternMatchStatus.MATCHED ||
-                            (filterConfig.includeUnchecked && matchStatus === PatternMatchStatus.NOT_CHECKED);
+                        return matchStatus === PatternMatchStatus.MATCHED;
                     } else if (filterConfig.matchType === MatchType.NOT_MATCH) {
-                        return matchStatus === PatternMatchStatus.NOT_MATCHED ||
-                            (filterConfig.includeUnchecked && matchStatus === PatternMatchStatus.NOT_CHECKED);
+                        return matchStatus === PatternMatchStatus.NOT_MATCHED;
                     }
 
                     return true;
@@ -68,7 +67,7 @@ function CodeFilesSection({ codeFiles, pattern, selectedPatterns, patternFilters
         if (isPatternFile(element)) {
             // Update matchStatus based on patternsMatchResults
             const matchResult = patternsMatchResults[element.filename];
-            const matchStatus = matchResult?.matchType || PatternMatchStatus.NOT_CHECKED;
+            const matchStatus = matchResult?.matchType;
 
             return {
                 ...element,

@@ -209,6 +209,10 @@ export async function startMatch(compoundPattern: CompoundPattern, codeFiles: Co
     const matchResponse = await compoundApi.match(compoundPattern, codeFilesToMatch);
 
     const updatedCodeFiles = codeFiles.map((file) => {
+        if (!_.isNil(file.validationError)) {
+            return file;
+        }
+
         const matchResult = matchResponse[file.filename];
 
         if (isNil(matchResult)) {

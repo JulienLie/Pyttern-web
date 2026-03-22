@@ -1,3 +1,0 @@
-# EraseArg MATCH: param = ...
-def reset(item):
-    item = None

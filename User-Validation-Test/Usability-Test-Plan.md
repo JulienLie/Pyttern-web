@@ -14,12 +14,12 @@
 
 ## Test Flow
 
-| Phase                          | Duration  |
-|--------------------------------|-----------|
-| 1. Introduction & Demo         | ~20 min   |
-| 2. Task A — Basic Compound     | ~35 min   |
-| 3. Task B — Complex Compound   | ~45 min   |
-| 4. Post-Test Questionnaire     | ~20 min   |
+| Phase                                                                                 | Duration |
+|---------------------------------------------------------------------------------------|----------|
+| 1. Introduction & Demo                                                                | ~20 min  |
+| 2. Task A — Basic Compound (with During-Test Questionnaire)                           | ~35 min  |
+| 3. Task B — Complex Compound (with During-Test Questionnaire)                         | ~45 min  |
+| 4. Post-Test Questionnaire (SUS + extra questions related with the tool for feedback) | ~20 min  |
 
 ---
 
@@ -82,14 +82,14 @@ Read the following to the participant:
 
 **3 pattern files (loose `.pyt` files):**
 
-| File                   | What it detects                                  |
-|------------------------|--------------------------------------------------|
-| `has_class_init.pyt`   | A class that has an `__init__` method            |
-| `has_method_return.pyt`| A class that has a method with a `return` statement |
-| `has_init_return.pyt`  | A class whose `__init__` method returns a value  |
+| File                    | What it detects                                     |
+|-------------------------|-----------------------------------------------------|
+| `has_class_init.pyt`    | A class that has an `__init__` method               |
+| `has_method_return.pyt` | A class that has a method with a `return` statement |
+| `has_init_return.pyt`   | A class whose `__init__` method returns a value     |
 
 **5 student code files** (`TaskA/Codes/` folder):
-`student_A1.py`, `student_A2.py`, `student_A3.py`, `student_A4.py`, `student_A5_invalid.py`
+`student_A1.py`, `student_A2.py`, `student_A3.py`, `student_A4.py`, `student_A5.py`
 
 ### What the Participant Needs to Do
 
@@ -121,29 +121,29 @@ ProperClassInit (root)
 
 **Q3.** Were there any submissions that could **not be validated**? If so, which ones?
 
-> **Expected Answer:** `student_A5_invalid.py`
+> **Expected Answer:** `student_A5.py`
 
 **Q4.** How many files matched the compound pattern in total?
 
 > **Expected Answer:** 2
 
-**Q5.** Using the filter feature: Which files matched both `has_class_init` and `has_method_return`? *(List the file names.)*
+**Q5.** Which files matched both `has_class_init` and `has_method_return`? *(List the file names.)*
 
 > **Expected Answer:** `student_A1.py`, `student_A2.py`, `student_A4.py`
 
 **Q6.** For the file that has a validation error, what is the exact problem? *(Name the file and explain briefly.)*
 
-> **Expected Answer (open-ended):** `student_A5_invalid.py` — missing colons after method definitions.
+> **Expected Answer (open-ended):** `student_A5.py` — missing colons after method definitions.
 
 ### Expected Results Summary (Task A)
 
-| File               | has_class_init | has_method_return | has_init_return | Compound Result |
-|--------------------|:-:|:-:|:-:|:-:|
-| student_A1.py      | Match | Match | No Match | **Match** |
-| student_A2.py      | Match | Match | Match    | **No Match** |
-| student_A3.py      | Match | No Match | No Match | **No Match** |
-| student_A4.py      | Match | Match | No Match | **Match** |
-| student_A5_invalid.py | — | — | — | **Not Validated** |
+| File          | has_class_init | has_method_return | has_init_return |  Compound Result  |
+|---------------|:--------------:|:-----------------:|:---------------:|:-----------------:|
+| student_A1.py |     Match      |       Match       |    No Match     |     **Match**     |
+| student_A2.py |     Match      |       Match       |      Match      |   **No Match**    |
+| student_A3.py |     Match      |     No Match      |    No Match     |   **No Match**    |
+| student_A4.py |     Match      |       Match       |    No Match     |     **Match**     |
+| student_A5.py |       —        |         —         |        —        | **Not Validated** |
 
 ---
 
@@ -165,16 +165,16 @@ Read the following to the participant:
 
 **5 pattern files (loose `.pyt` files):**
 
-| File                    | What it detects                                           |
-|-------------------------|-----------------------------------------------------------|
-| `has_parent_child.pyt`  | A parent class and a child class that inherits from it    |
-| `has_super_init.pyt`    | A child class that calls `super().__init__()` in its constructor |
-| `has_init_return.pyt`   | A class whose `__init__` method returns a value           |
+| File                    | What it detects                                                      |
+|-------------------------|----------------------------------------------------------------------|
+| `has_parent_child.pyt`  | A parent class and a child class that inherits from it               |
+| `has_super_init.pyt`    | A child class that calls `super().__init__()` in its constructor     |
+| `has_init_return.pyt`   | A class whose `__init__` method returns a value                      |
 | `has_early_return.pyt`  | A class with a method that has a `return` inside a conditional block |
-| `has_method_return.pyt` | A class with a method that has a direct `return` statement |
+| `has_method_return.pyt` | A class with a method that has a direct `return` statement           |
 
 **12 student code files** (`TaskB/Codes/` folder):
-`student_B01.py` through `student_B12.py` (including `student_B11_invalid.py`)
+`student_B01.py` through `student_B12.py` (including `student_B11.py`)
 
 ### What the Participant Needs to Do
 
@@ -207,9 +207,9 @@ ProperInheritance (root)
 
 > **Expected Answer:** `student_B04.py`, `student_B05.py`, `student_B06.py`, `student_B07.py`, `student_B08.py`, `student_B09.py`, `student_B12.py`
 
-**Q3.** Were there any submissions that could **not be validated**? If so, which ones and what was the issue?
+**Q3.** Were there any submissions that is not validated**? If so, which ones and what was the issue?
 
-> **Expected Answer:** `student_B11_invalid.py` — it has syntax errors (missing colons after `__init__` and `off_road` method definitions).
+> **Expected Answer:** `student_B11.py` — it has syntax errors (missing colons after `__init__` and `off_road` method definitions).
 
 **Q4.** How many files matched the compound pattern in total?
 
@@ -226,20 +226,20 @@ ProperInheritance (root)
 
 ### Expected Results Summary (Task B)
 
-| File          | has_parent_child | has_super_init | has_init_return | has_early_return | has_method_return | Compound |
-|---------------|:-:|:-:|:-:|:-:|:-:|:-:|
-| student_B01   | Match | Match | No Match | No Match | Match | **Match** |
-| student_B02   | Match | Match | No Match | Match | No Match | **Match** |
-| student_B03   | Match | Match | No Match | Match | Match | **Match** |
-| student_B04   | Match | Match | Match | No Match | Match | **No Match** |
-| student_B05   | Match | No Match | No Match | No Match | Match | **No Match** |
-| student_B06   | No Match | No Match | No Match | Match | Match | **No Match** |
-| student_B07   | Match | Match | No Match | No Match | No Match | **No Match** |
-| student_B08   | Match | No Match | No Match | Match | Match | **No Match** |
-| student_B09   | No Match | No Match | No Match | No Match | No Match | **No Match** |
-| student_B10   | Match | Match | No Match | No Match | Match | **Match** |
-| student_B11   | — | — | — | — | — | **Not Validated** |
-| student_B12   | Match | Match | Match | Match | No Match | **No Match** |
+| File        | has_parent_child | has_super_init | has_init_return | has_early_return | has_method_return |     Compound      |
+|-------------|:----------------:|:--------------:|:---------------:|:----------------:|:-----------------:|:-----------------:|
+| student_B01 |      Match       |     Match      |    No Match     |     No Match     |       Match       |     **Match**     |
+| student_B02 |      Match       |     Match      |    No Match     |      Match       |     No Match      |     **Match**     |
+| student_B03 |      Match       |     Match      |    No Match     |      Match       |       Match       |     **Match**     |
+| student_B04 |      Match       |     Match      |      Match      |     No Match     |       Match       |   **No Match**    |
+| student_B05 |      Match       |    No Match    |    No Match     |     No Match     |       Match       |   **No Match**    |
+| student_B06 |     No Match     |    No Match    |    No Match     |      Match       |       Match       |   **No Match**    |
+| student_B07 |      Match       |     Match      |    No Match     |     No Match     |     No Match      |   **No Match**    |
+| student_B08 |      Match       |    No Match    |    No Match     |      Match       |       Match       |   **No Match**    |
+| student_B09 |     No Match     |    No Match    |    No Match     |     No Match     |     No Match      |   **No Match**    |
+| student_B10 |      Match       |     Match      |    No Match     |     No Match     |       Match       |     **Match**     |
+| student_B11 |        —         |       —        |        —        |        —         |         —         | **Not Validated** |
+| student_B12 |      Match       |     Match      |      Match      |      Match       |     No Match      |   **No Match**    |
 
 ---
 
@@ -249,18 +249,18 @@ ProperInheritance (root)
 
 *Rate each statement from 1 (Strongly Disagree) to 5 (Strongly Agree).*
 
-| # | Statement |
-|---|-----------|
-| 1 | I think that I would like to use this system frequently. |
-| 2 | I found the system unnecessarily complex. |
-| 3 | I thought the system was easy to use. |
-| 4 | I think that I would need the support of a technical person to be able to use this system. |
-| 5 | I found the various functions in this system were well integrated. |
-| 6 | I thought there was too much inconsistency in this system. |
-| 7 | I would imagine that most people would learn to use this system very quickly. |
-| 8 | I found the system very cumbersome to use. |
-| 9 | I felt very confident using the system. |
-| 10 | I needed to learn a lot of things before I could get going with this system. |
+| #  | Statement                                                                                  |
+|----|--------------------------------------------------------------------------------------------|
+| 1  | I think that I would like to use this system frequently.                                   |
+| 2  | I found the system unnecessarily complex.                                                  |
+| 3  | I thought the system was easy to use.                                                      |
+| 4  | I think that I would need the support of a technical person to be able to use this system. |
+| 5  | I found the various functions in this system were well integrated.                         |
+| 6  | I thought there was too much inconsistency in this system.                                 |
+| 7  | I would imagine that most people would learn to use this system very quickly.              |
+| 8  | I found the system very cumbersome to use.                                                 |
+| 9  | I felt very confident using the system.                                                    |
+| 10 | I needed to learn a lot of things before I could get going with this system.               |
 
 **SUS Scoring:** For odd-numbered questions, subtract 1 from the score. For even-numbered questions, subtract the score from 5. Sum all adjusted scores and multiply by 2.5. Result is on a 0–100 scale.
 
@@ -268,24 +268,22 @@ ProperInheritance (root)
 
 *Rate each statement from 1 (Strongly Disagree) to 5 (Strongly Agree).*
 
-| # | Statement |
-|---|-----------|
+| #  | Statement                                                                                          |
+|----|----------------------------------------------------------------------------------------------------|
 | 11 | I found it easy to understand the compound pattern structure (the tree with AND/OR/NOT operators). |
-| 12 | The filter feature helped me find specific match results efficiently. |
-| 13 | I could clearly distinguish between matched, not-matched, and not-validated files. |
-| 14 | The tool would be useful for analyzing student submissions in a real teaching scenario. |
+| 12 | The filter feature helped me find specific match results efficiently.                              |
+| 13 | I could clearly distinguish between matched, not-matched, and not-validated files.                 |
+| 14 | The tool would be useful for analyzing student submissions in a real teaching scenario.            |
 
 ### Part C: Open-Ended — 1 Question
 
-| # | Question |
-|---|----------|
+| #  | Question                                                                                                                             |
+|----|--------------------------------------------------------------------------------------------------------------------------------------|
 | 15 | What would you improve or change about the tool? Please describe any difficulties you experienced or features you would like to see. |
 
 ---
 
-## Moderator Notes
-
-### What to Observe During Tasks
+## What to Observe During Tasks
 
 - **Compound pattern construction:** Did the participant build the correct tree structure? Where did they struggle?
 - **Task completion:** Did the participant complete each question correctly?
@@ -300,22 +298,59 @@ ProperInheritance (root)
 
 ### Task A Correct Answers
 
-| Question | Answer |
-|----------|--------|
-| Q1 — Matched | `student_A1.py`, `student_A4.py` |
-| Q2 — Not Matched | `student_A2.py`, `student_A3.py` |
-| Q3 — Not Validated | `student_A5_invalid.py` |
-| Q4 — How many matched | 2 |
+| Question                                          | Answer                                            |
+|---------------------------------------------------|---------------------------------------------------|
+| Q1 — Matched                                      | `student_A1.py`, `student_A4.py`                  |
+| Q2 — Not Matched                                  | `student_A2.py`, `student_A3.py`                  |
+| Q3 — Not Validated                                | `student_A5.py`                                   |
+| Q4 — How many matched                             | 2                                                 |
 | Q5 — Filter: has_class_init AND has_method_return | `student_A1.py`, `student_A2.py`, `student_A4.py` |
-| Q6 — Validation error detail | Missing colons after method definitions |
+| Q6 — Validation error detail                      | Missing colons after method definitions           |
 
 ### Task B Correct Answers
 
-| Question                                                               | Answer |
-|------------------------------------------------------------------------|--------|
-| Q1 — Matched                                                           | `student_B01.py`, `student_B02.py`, `student_B03.py`, `student_B10.py` |
+| Question                                                               | Answer                                                                                                                       |
+|------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
+| Q1 — Matched                                                           | `student_B01.py`, `student_B02.py`, `student_B03.py`, `student_B10.py`                                                       |
 | Q2 — Not Matched                                                       | `student_B04.py`, `student_B05.py`, `student_B06.py`, `student_B07.py`, `student_B08.py`, `student_B09.py`, `student_B12.py` |
-| Q3 — Not Validated                                                     | `student_B11_invalid.py` (syntax errors) |
-| Q4 — How many matched                                                  | 4 |
-| Q5 — Filter: has_parent_child AND has_super_init (the number of files) | 7 |
-| Q6 — Filter: parent_child but not super_init                           | `student_B05.py`, `student_B08.py` |
+| Q3 — Not Validated                                                     | `student_B11.py` (syntax errors)                                                                                             |
+| Q4 — How many matched                                                  | 4                                                                                                                            |
+| Q5 — Filter: has_parent_child AND has_super_init (the number of files) | 7                                                                                                                            |
+| Q6 — Filter: parent_child but not super_init                           | `student_B05.py`, `student_B08.py`                                                                                           |
+
+
+---
+
+## How Questions Will be Presented
+
+- 1 google form includes 5 sections;  
+  1- Introduction | 
+  2- Task A Questions | 
+  3- Task B Questions | 
+  4- SUS Questions | 
+  5- Feedbacks about the tool
+
+### 1) Introduction;
+   - Explanation of the sections and how they will follow the questions.
+   - Contains a question: "Do You have experience with Pyttern?"
+
+### 2) Task A Questions
+   - The questions for Task A during the test
+
+### 3) Task A Questions
+   - The questions for Task B during the test
+
+### 4) SUS Questions
+   - 10 SUS Questions after the test
+
+### 5) Feedbacks about the tool
+   -  The 5 Questions related with the tool: 5 Questions (4 - Disagree/Agree , 1 - Open Ended)
+
+*(The questions are mentioned in the report)*
+
+---
+
+## Created Files to Use in the Test:
+
+- [Task A Files](TaskA/)
+- [Task B Files](TaskB/)

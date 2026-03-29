@@ -36,10 +36,13 @@ function CodeFileDetailsCard({
     onDeleteFile,
     getModifiedPatternForFile,
 }: CodeFileDetailsCardProps) {
-    // const navigate = useNavigate();
     const handlePatternFileClick = (patternFile: PatternFile) => {
-        // navigate('/', { state: { patternCode: patternFile.code, code: '' } });
-        console.log(patternFile);
+        const preloadData = JSON.stringify({
+            patternCode: patternFile.code,
+            code: file.code,
+        });
+        sessionStorage.setItem('matcher_preload', preloadData);
+        window.open('/matcher', '_blank');
     };
 
     return (

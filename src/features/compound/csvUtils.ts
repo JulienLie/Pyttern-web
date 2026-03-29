@@ -24,36 +24,18 @@ export function buildMatchResultsCsv(codeFiles: CodeFile[], compoundPatternName:
     const headerRow = headerCells.map(escapeCsvField).join(',');
 
     const dataRows = codeFiles.map((file: CodeFile) => {
-        const isValidationFailed: boolean = !_.isNil(file.validationError);
-        const validationError = 'validation-error';
+        const isNotValidated: boolean = !_.isNil(file.validationError);
+        const notValidated = 'not-validated';
 
         const statuses = patternColumns.map((patternKey) => {
-            if (isValidationFailed)
-                return validationError;
+            if (isNotValidated)
+                return notValidated;
 
             const result = file.patternsMatchResults?.[patternKey];
             return result?.matchType ?? '';
         });
 
-        /*
-        let matchResult: string;
-        switch (file.status) {
-            case FileStatus.MATCHED:
-                matchResult = 'Matched';
-                break;
-            case FileStatus.NOT_MATCHED:
-                matchResult = 'Not Matched';
-                break;
-            case FileStatus.NOT_VALIDATED:
-                matchResult = 'Not Validated';
-                break;
-            case FileStatus.ERROR:
-                matchResult = 'Error';
-                break;
-        }
-         */
-
-        const cells = [file.filename, isValidationFailed? validationError : file.status, ...statuses];
+        const cells = [file.filename, isNotValidated? notValidated : file.status, ...statuses];
         return cells.map(escapeCsvField).join(',');
     });
 

@@ -1,8 +1,9 @@
 import './Matcher.css';
 
-import {lazy, Suspense, useRef} from "react";
+import {lazy, Suspense, useEffect, useRef} from "react";
 import {GridStack} from "gridstack";
-import { useAppSelector } from "../../../common/hooks.ts";
+import { useAppDispatch, useAppSelector } from "../../../common/hooks.ts";
+import { setPatternCode, setCode } from "../matcherSlice.ts";
 
 import GridStackWrapper from "./components/GridStackWrapper.tsx";
 import GridStackElement from "./components/GridStackElement.tsx";
@@ -16,10 +17,22 @@ const CytoscapeComponent = lazy(() => import("./components/CytoscapeComponent/Cy
 export type { MatchState, State } from "../matcherModels.ts";
 
 function Matcher() {
+    const dispatch = useAppDispatch();
     // Get state from Redux store
     const { patternCode, code, matchState } = useAppSelector((state) => state.matcher);
 
     const gridRef = useRef<GridStack | null>(null);
+
+    // Load preloaded data from sessionStorage (set by compound page when opening in new tab)
+    useEffect(() => {
+        const preloadData = sessionStorage.getItem('matcher_preload');
+        if (preloadData) {
+            sessionStorage.removeItem('matcher_preload');
+            const { patternCode, code } = JSON.parse(preloadData);
+            if (patternCode) dispatch(setPatternCode(patternCode));
+            if (code) dispatch(setCode(code));
+        }
+    }, [dispatch]);
 
     return (
     <>

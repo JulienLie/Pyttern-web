@@ -1,5 +1,4 @@
 import React, {ReactNode} from "react";
-import 'bootstrap/dist/css/bootstrap.css';
 
 interface PDAStackProps {
     currentStack: string;

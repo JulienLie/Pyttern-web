@@ -29,10 +29,6 @@ function FilterPanel({ isOpen, onClose, compoundPattern, selectedPatterns, patte
         dispatch(updatePatternFilter({ patternFilename, matchType }));
     };
 
-    const handleIncludeUncheckedChange = (patternFilename: string, includeUnchecked: boolean) => {
-        dispatch(updatePatternFilter({ patternFilename, includeUnchecked }));
-    };
-
     const getFilterConfig = (patternFilename: string): PatternFilterConfig => {
         // If filter config exists, return it
         if (patternFilters[patternFilename]) {
@@ -45,7 +41,6 @@ function FilterPanel({ isOpen, onClose, compoundPattern, selectedPatterns, patte
         
         return {
             matchType: defaultMatchType,
-            includeUnchecked: false,
         };
     };
 
@@ -104,19 +99,6 @@ function FilterPanel({ isOpen, onClose, compoundPattern, selectedPatterns, patte
                                                     <option value={MatchType.MATCH}>Match</option>
                                                     <option value={MatchType.NOT_MATCH}>Not Match</option>
                                                 </select>
-                                            </div>
-                                            
-                                            <div className="filter-control-group">
-                                                <label className="filter-checkbox-label">
-                                                    <input
-                                                        type="checkbox"
-                                                        className="filter-include-unchecked"
-                                                        checked={filterConfig.includeUnchecked}
-                                                        onChange={(e) => handleIncludeUncheckedChange(patternFile.filename, e.target.checked)}
-                                                        onClick={(e) => e.stopPropagation()}
-                                                    />
-                                                    <span className="filter-checkbox-text">Include unchecked files</span>
-                                                </label>
                                             </div>
                                         </div>
                                     )}

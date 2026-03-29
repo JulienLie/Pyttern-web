@@ -1,6 +1,6 @@
 import './PatternTree.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFile, faFolder, faCheckCircle, faXmarkCircle, faFileHalfDashed, faExclamationTriangle, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { faFile, faFolder, faCheckCircle, faXmarkCircle, faExclamationTriangle, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { CompoundPattern, CompoundPatternElement, PatternFile, PatternMatchStatus, FileStatus } from '../../../compoundModels.ts';
 
 
@@ -31,8 +31,6 @@ function PatternTree({ pattern, onPatternFileClick, showMatchStatus = false, sho
                 return { icon: faCheckCircle, className: 'leaf-icon leaf-icon-matched' };
             case PatternMatchStatus.NOT_MATCHED:
                 return { icon: faXmarkCircle, className: 'leaf-icon leaf-icon-not-matched' };
-            case PatternMatchStatus.NOT_CHECKED:
-                return { icon: faFileHalfDashed, className: 'leaf-icon leaf-icon-not-checked' };
             default:
                 return { icon: faFile, className: 'leaf-icon' };
         }
@@ -71,7 +69,9 @@ function PatternTree({ pattern, onPatternFileClick, showMatchStatus = false, sho
             // Determine leaf-text className
             let leafTextClassName = 'leaf-text';
             if (useMatchStatus) {
-                leafTextClassName += ` ${matchStatus ?? PatternMatchStatus.NOT_CHECKED}`;
+                if (matchStatus) {
+                    leafTextClassName += ` ${matchStatus}`;
+                }
             } else if (element.status === FileStatus.NOT_VALIDATED || element.status === FileStatus.ERROR) {
                 leafTextClassName += ' not-validated';
             }

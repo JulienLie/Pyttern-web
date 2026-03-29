@@ -48,6 +48,7 @@
 
 .expandable-section {
     flex: 1;
+    min-width: 0;
     display: flex;
     align-items: center;
 }
@@ -64,12 +65,16 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+    min-width: 0;
 }
 
 .expandable-title {
     font-size: 15px;
     font-weight: 500;
     color: #1f2937;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .expandable-subtitle {

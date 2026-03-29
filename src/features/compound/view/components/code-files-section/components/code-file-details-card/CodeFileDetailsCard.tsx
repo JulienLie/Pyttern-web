@@ -17,7 +17,6 @@ import {
 import ExpandableCard from '../../../../../../../common/components/expandable-card/ExpandableCard';
 import PatternTree from '../../../pattern-tree/PatternTree';
 import _ from 'lodash';
-import { useNavigate } from 'react-router-dom';
 import ValidationErrorCard from '../../../../../../../common/components/validation-error-card/ValidationErrorCard';
 import CodeView from '../../../../../../../common/components/code-view/CodeView';
 
@@ -37,9 +36,13 @@ function CodeFileDetailsCard({
     onDeleteFile,
     getModifiedPatternForFile,
 }: CodeFileDetailsCardProps) {
-    const navigate = useNavigate();
     const handlePatternFileClick = (patternFile: PatternFile) => {
-        navigate('/', { state: { patternCode: patternFile.code, code: '' } });
+        const preloadData = JSON.stringify({
+            patternCode: patternFile.code,
+            code: file.code,
+        });
+        sessionStorage.setItem('matcher_preload', preloadData);
+        window.open('/matcher', '_blank');
     };
 
     return (
@@ -55,7 +58,9 @@ function CodeFileDetailsCard({
                                 ? 'status-matched'
                                 : file.status === FileStatus.NOT_MATCHED
                                   ? 'status-not-matched'
-                                  : 'status-error'
+                                  : file.status === FileStatus.NOT_VALIDATED || file.validationError
+                                    ? 'status-not-validated'
+                                    : 'status-error'
                             : file.status === FileStatus.VALIDATED
                               ? 'status-validated'
                               : file.status === FileStatus.NOT_VALIDATED
@@ -76,6 +81,11 @@ function CodeFileDetailsCard({
                                 <FontAwesomeIcon icon={faXmarkCircle} className="status-icon" />
                                 <span className="status-text">Not Matched</span>
                             </>
+                        ) : file.status === FileStatus.NOT_VALIDATED || file.validationError ? (
+                            <>
+                                <FontAwesomeIcon icon={faExclamationTriangle} className="status-icon" />
+                                <span className="status-text">Not Validated</span>
+                            </>
                         ) : (
                             <>
                                 <FontAwesomeIcon icon={faExclamationTriangle} className="status-icon" />
@@ -90,7 +100,7 @@ function CodeFileDetailsCard({
                     ) : file.status === FileStatus.NOT_VALIDATED ? (
                         <>
                             <FontAwesomeIcon icon={faExclamationTriangle} className="status-icon" />
-                            <span className="status-text">Validation Failed</span>
+                            <span className="status-text">Not Validated</span>
                         </>
                     ) : file.status === FileStatus.PENDING ? (
                         <>
@@ -130,7 +140,7 @@ function CodeFileDetailsCard({
                                     case FileStatus.NOT_MATCHED:
                                         return 'Not Matched';
                                     case FileStatus.ERROR:
-                                        return 'Error';
+                                        return file.validationError ? 'Not Validated' : 'Error';
                                     default:
                                         return 'Unknown';
                                 }

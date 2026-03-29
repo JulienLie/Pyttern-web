@@ -94,12 +94,19 @@ const matcherSlice = createSlice({
         
         // Reset matcher
         resetMatcher: (state) => {
+            state.patternCode = "";
+            state.code = "";
             state.matchState = defaultMatchState;
             state.hasStarted = false;
             state.step = 0;
             state.maxStep = 0;
             state.matchStates = [];
             state.error = null;
+            state.validationErrors = { code: "", pattern: "" };
+            state.isValidating = false;
+            state.patternGraph = null;
+            state.codeGraph = null;
+            state.isLoadingGraph = false;
         },
         
         // Validation actions

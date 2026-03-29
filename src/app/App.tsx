@@ -1,27 +1,17 @@
-import { Routes, Route } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
+import { createBrowserRouter } from 'react-router-dom';
 import Layout from '../common/components/navbar/Layout.tsx';
-import { lazy, Suspense } from 'react';
 import Compound from '../features/compound/view/Compound.tsx';
-import AppLoader from '../common/components/app-loader/AppLoader.tsx';
 
-const Matcher = lazy(() => import('../features/matcher/view/Matcher.tsx'));
-
-function App() {
-  return (
-    <>
-      <Toaster position="top-center" toastOptions={{ duration: 5000 }} />
-      <AppLoader />
-      <Suspense fallback={<div>Loading...</div>}>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-              <Route index element={<Compound />} />
-            <Route path={'matcher'} element={<Matcher />} />
-          </Route>
-        </Routes>
-      </Suspense>
-    </>
-  );
-}
-
-export default App;
+export const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Layout />,
+    children: [
+      { index: true, element: <Compound /> },
+      {
+        path: 'matcher',
+        lazy: () => import('../features/matcher/view/Matcher.tsx').then((m) => ({ Component: m.default })),
+      },
+    ],
+  },
+]);

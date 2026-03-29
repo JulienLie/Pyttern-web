@@ -205,11 +205,14 @@ export async function validatePatterns(patternFiles: PatternFile[]): Promise<Pat
 export async function startMatch(compoundPattern: CompoundPattern, codeFiles: CodeFile[]): Promise<CodeFile[]> {
 
     const codeFilesToMatch = codeFiles.filter(file => file.status === FileStatus.VALIDATED);
-    const notValidatedCodeFiles = codeFiles.filter(file => file.status === FileStatus.NOT_VALIDATED);
 
     const matchResponse = await compoundApi.match(compoundPattern, codeFilesToMatch);
 
     const updatedCodeFiles = codeFiles.map((file) => {
+        if (!_.isNil(file.validationError)) {
+            return file;
+        }
+
         const matchResult = matchResponse[file.filename];
 
         if (isNil(matchResult)) {

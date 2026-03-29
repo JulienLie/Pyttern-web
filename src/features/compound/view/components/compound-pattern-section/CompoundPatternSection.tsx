@@ -2,10 +2,11 @@ import { useState } from 'react';
 import './CompoundPatternSection.css';
 import PatternTree from '../pattern-tree/PatternTree.tsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFolderTree, faFileImport, faRotateRight } from '@fortawesome/free-solid-svg-icons';
+import { faFolderTree, faFileImport, faRotateRight, faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { CompoundPattern, PatternFile } from '../../../compoundModels.ts';
 import * as _ from 'lodash';
 import PatternFileDetailsModal from './components/pattern-file-details-card/PatternFileDetailsModal.tsx';
+import InfoModal from '../../../../../common/components/info-modal/InfoModal.tsx';
 
 interface CompoundPatternSectionProps {
     pattern?: CompoundPattern | null;
@@ -17,6 +18,7 @@ interface CompoundPatternSectionProps {
 function CompoundPatternSection({ pattern, isMatchDone, onImportPattern, onResetPattern }: CompoundPatternSectionProps) {
     const [selectedPatternFile, setSelectedPatternFile] = useState<PatternFile | null>(null);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+    const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
 
     const handlePatternFileClick = (file: PatternFile) => {
         setSelectedPatternFile(file);
@@ -37,6 +39,9 @@ function CompoundPatternSection({ pattern, isMatchDone, onImportPattern, onReset
                     <h2 className="d-flex align-items-center gap-3 m-0">
                         <FontAwesomeIcon icon={faFolderTree} className="header-icon" />
                         Compound Pattern
+                        <button className="info-icon-btn" onClick={() => setIsInfoModalOpen(true)} title="Learn about compound patterns">
+                            <FontAwesomeIcon icon={faCircleInfo} />
+                        </button>
                     </h2>
                 </div>
                 <div className="section-actions d-flex gap-3">
@@ -71,6 +76,23 @@ function CompoundPatternSection({ pattern, isMatchDone, onImportPattern, onReset
                 onRequestClose={handleCloseDetailsModal}
                 patternFile={selectedPatternFile}
             />
+
+            <InfoModal
+                isOpen={isInfoModalOpen}
+                onRequestClose={() => setIsInfoModalOpen(false)}
+                title="Compound Pattern"
+                icon={faFolderTree}
+            >
+                <p>A compound pattern is a hierarchical structure of individual patterns used to match against your code files.</p>
+                <p><strong>How to use:</strong></p>
+                <ul>
+                    <li><strong>Import</strong> a compound pattern folder containing your pattern files and a configuration file</li>
+                    <li>The <strong>tree view</strong> displays the hierarchical structure of your compound pattern with logical operators (AND, OR, NOT)</li>
+                    <li>Each pattern file is <strong>validated</strong> automatically after import — look for status icons next to each pattern</li>
+                    <li><strong>Click</strong> on any pattern file in the tree to inspect its contents and details</li>
+                    <li>Use the <strong>Reset</strong> button to clear the imported pattern and start over</li>
+                </ul>
+            </InfoModal>
         </div>
     );
 }

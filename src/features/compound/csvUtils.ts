@@ -1,4 +1,5 @@
-import { CodeFile, FileStatus, PatternMatchStatus } from './compoundModels';
+import { CodeFile } from './compoundModels';
+import _ from "lodash";
 
 function escapeCsvField(value: string): string {
     if (!/[\n",]/.test(value)) {
@@ -22,30 +23,19 @@ export function buildMatchResultsCsv(codeFiles: CodeFile[], compoundPatternName:
     const headerCells = ['Code File Name', compoundPatternName, ...patternColumns];
     const headerRow = headerCells.map(escapeCsvField).join(',');
 
-    const dataRows = codeFiles.map((file) => {
+    const dataRows = codeFiles.map((file: CodeFile) => {
+        const isNotValidated: boolean = !_.isNil(file.validationError);
+        const notValidated = 'not-validated';
+
         const statuses = patternColumns.map((patternKey) => {
+            if (isNotValidated)
+                return notValidated;
+
             const result = file.patternsMatchResults?.[patternKey];
-            const status = result?.matchType ?? PatternMatchStatus.NOT_CHECKED;
-            return status;
+            return result?.matchType ?? '';
         });
 
-        let matchResult: string;
-        switch (file.status) {
-            case FileStatus.MATCHED:
-                matchResult = 'Matched';
-                break;
-            case FileStatus.NOT_MATCHED:
-                matchResult = 'Not Matched';
-                break;
-            case FileStatus.NOT_VALIDATED:
-                matchResult = 'Not Validated';
-                break;
-            case FileStatus.ERROR:
-                matchResult = 'Error';
-                break;
-        }
-
-        const cells = [file.filename, file.status, ...statuses];
+        const cells = [file.filename, isNotValidated? notValidated : file.status, ...statuses];
         return cells.map(escapeCsvField).join(',');
     });
 
@@ -53,7 +43,7 @@ export function buildMatchResultsCsv(codeFiles: CodeFile[], compoundPatternName:
 }
 
 export function downloadCsv(csv: string, filename: string): void {
-    const blob = new Blob([csv], { type: 'text/csv' });
+    const blob = new Blob([csv], {type: 'text/csv'});
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;

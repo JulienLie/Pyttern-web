@@ -58,7 +58,6 @@ const compoundSlice = createSlice({
 
                 state.patternFilters[patternFilename] = {
                     matchType: defaultMatchType,
-                    includeUnchecked: false,
                 };
             } else if (!updatedSelectedPatterns.includes(patternFilename)) {
                 delete state.patternFilters[patternFilename];
@@ -66,13 +65,10 @@ const compoundSlice = createSlice({
 
         },
         updatePatternFilter: (state, action: PayloadAction<UpdatePatternFilterPayload>) => {
-            const { patternFilename, matchType, includeUnchecked } = action.payload;
+            const { patternFilename, matchType } = action.payload;
             if (state.patternFilters[patternFilename]) {
                 if (matchType !== undefined) {
                     state.patternFilters[patternFilename].matchType = matchType;
-                }
-                if (includeUnchecked !== undefined) {
-                    state.patternFilters[patternFilename].includeUnchecked = includeUnchecked;
                 }
             }
         },

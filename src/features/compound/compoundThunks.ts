@@ -5,7 +5,7 @@ import { CodeFile, CompoundPattern } from "./compoundModels.ts";
 import { setAppLoaderOff, setAppLoaderOn } from "../../common/slices/appLoaderSlice.ts";
 import * as compoundService from './compoundService.ts';
 
-function getApiErrorMessage(error: unknown): string {
+export function getApiErrorMessage(error: unknown): string {
     if (error instanceof Error) {
         if (error.message === 'Failed to fetch' || error.name === 'TypeError') {
             return 'Network error. Please check your connection.';

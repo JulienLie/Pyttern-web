@@ -1,4 +1,4 @@
-# LoopVarUnused = AND(LoopVarUnused.pyt, NOT(LoopVarUsed.pyt))
+# LoopVarUnused = AND(LoopVarUnused1.pyt, NOT(LoopVarUsed2.pyt))
 # Sub-pattern results: loop.pyt ✗  |  used.pyt ✗
 # Compound result: NO-MATCH (no for-loop at all, AND fails immediately)
 # Both sub-patterns fail to match

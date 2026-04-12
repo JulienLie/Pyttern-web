@@ -171,7 +171,7 @@ function CodeFileDetailsCard({
                         <div className="pt-3 pb-3">
                             <PatternTree
                                 pattern={getModifiedPatternForFile(file) || pattern}
-                                onPatternFileClick={handlePatternFileClick}
+                                onPatternFileClick={file.validationError ? undefined : handlePatternFileClick}
                                 showMatchStatus
                             />
                         </div>

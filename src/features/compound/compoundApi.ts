@@ -79,7 +79,6 @@ export async function match(compoundPattern: CompoundPattern, codeFiles: CodeFil
     }
 
     const responseData: MatchResponse = await response.json();
-    console.log('Match Response -> ', responseData);
 
     // Transform array response into object keyed by filename
     const transformed: Record<string, TransformedMatchResult> = {};

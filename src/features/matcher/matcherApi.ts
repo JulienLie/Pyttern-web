@@ -22,6 +22,8 @@ export interface StepResponse {
     current_stack: string;
     previous_stack: string;
     code_pos: [number, number];
+    variables?: any;
+    previous_variables?: any;
 }
 
 export interface ValidationResponse {

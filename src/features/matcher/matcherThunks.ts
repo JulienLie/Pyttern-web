@@ -44,6 +44,8 @@ export const startMatch = createAsyncThunk<
                 currentStack: "",
                 previousStack: "",
                 codePos: [0, 0],
+                variables: [],
+                previousVariables: [],
             };
 
             dispatch(startMatchSuccess({
@@ -80,6 +82,8 @@ export const fetchStepData = createAsyncThunk<
                 currentStack: result.currentStack,
                 previousStack: result.previousStack,
                 codePos: result.codePos,
+                variables: result.variables,
+                previousVariables: result.previousVariables,
             };
 
             dispatch(updateStepState(newState));

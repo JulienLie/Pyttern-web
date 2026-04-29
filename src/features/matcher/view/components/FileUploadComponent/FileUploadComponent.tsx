@@ -9,6 +9,8 @@ import { setPatternCode, setCode as setCodeAction } from "../../../matcherSlice.
 import { validateCode } from "../../../matcherThunks.ts";
 import { getLangFromFileExtension } from "../../../../../common/utils/langUtils.ts";
 
+import MultiUploadModal from "../MultiUploadModal/MultiUploadModal.tsx";
+
 interface FileUploadProps {
     name: string;
     pos: [number, number];
@@ -30,6 +32,7 @@ const FileUploadComponent: React.FC<FileUploadProps> = ({ name, pos }) => {
     
     const [localCode, setLocalCode] = useState<string>(reduxCode);
     const [lang, setLang] = useState<string>("");
+    const [showModal, setShowModal] = useState(false);
 
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
     const editorRef = useRef<EditorView | null>(null);
@@ -93,6 +96,19 @@ const FileUploadComponent: React.FC<FileUploadProps> = ({ name, pos }) => {
         }
     };
 
+    let sub_pattern_input = null;
+    if(name === "pattern") {
+        sub_pattern_input = (
+            <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => setShowModal(true)}
+            >
+                Upload Sub-patterns
+            </button>
+        )
+    }
+
     return (
         <div className="form-floating">
             <form className="row mb-3">
@@ -106,6 +122,7 @@ const FileUploadComponent: React.FC<FileUploadProps> = ({ name, pos }) => {
                         onChange={handleFileChange} // File selection handler
                         required
                     />
+                    {sub_pattern_input}
                 </div>
             </form>
             <div className="row m-1">
@@ -132,6 +149,7 @@ const FileUploadComponent: React.FC<FileUploadProps> = ({ name, pos }) => {
                     disabled={is_disabled}
                 />
             </form>
+            <MultiUploadModal show={showModal} onHide={() => setShowModal(false)} />
         </div>
     );
 };

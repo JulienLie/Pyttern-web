@@ -11,6 +11,8 @@ import { getLangFromFileExtension } from "../../../../../common/utils/langUtils.
 
 import MultiUploadModal from "../MultiUploadModal/MultiUploadModal.tsx";
 
+import MultiUploadModal from "../MultiUploadModal/MultiUploadModal.tsx";
+
 interface FileUploadProps {
     name: string;
     pos: [number, number];

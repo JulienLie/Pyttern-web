@@ -8,6 +8,7 @@ import { useAppSelector } from "../../../common/hooks.ts";
 import GridStackWrapper from "./components/GridStackWrapper.tsx";
 import GridStackElement from "./components/GridStackElement.tsx";
 import PDAStackComponent from "./components/StackComponent/PDAStackComponent.tsx";
+import VariablesView from "./components/VariablesView/VariablesView.tsx";
 
 const MatchController = lazy(() => import("./components/MatchController.tsx"));
 const FileUploadComponent = lazy(() => import("./components/FileUploadComponent/FileUploadComponent.tsx"));
@@ -26,39 +27,51 @@ function Matcher() {
     <>
       <div className="matcher-container">
         <GridStackWrapper ref={gridRef}>
+            {/* Row 0-1 */}
             <GridStackElement x={0} y={0} w={6} h={2} min_w={3} min_h={2}>
                 <Suspense fallback={<div>Loading...</div>}>
                     <FileUploadComponent name="pattern" pos={[0, 0]}/>
                 </Suspense>
             </GridStackElement>
 
-            <GridStackElement y={0} w={6} h={2} min_w={3} min_h={2}>
+            <GridStackElement x={6} y={0} w={6} h={2} min_w={3} min_h={2}>
                 <Suspense fallback={<div>Loading...</div>}>
                     <FileUploadComponent name="code" pos={matchState.codePos}/>
                 </Suspense>
             </GridStackElement>
 
-    
-            <GridStackElement x={0} y={1} w={5} h={4} min_w={3} min_h={3}>
+            {/* Row 2-5 */}
+            <GridStackElement x={0} y={2} w={5} h={4} min_w={3} min_h={3}>
                 <Suspense fallback={<div>Loading...</div>}>
                     <CytoscapeComponent name="pattern" code={patternCode} grid={gridRef.current || undefined} />
                 </Suspense>
             </GridStackElement>
 
 
-            <GridStackElement y={1} w={1} h={4} min_w={1} min_h={1}>
+            <GridStackElement x={5} y={2} w={1} h={4} min_w={1} min_h={1}>
                 <Suspense fallback={<div>Loading...</div>}>
                     <PDAStackComponent currentStack={matchState.currentStack} previousStack={matchState.previousStack}/>
                 </Suspense>
             </GridStackElement>
 
-            <GridStackElement y={1} w={6} h={4} min_w={3} min_h={3}>
+            <GridStackElement x={6} y={2} w={6} h={4} min_w={3} min_h={3}>
                 <Suspense fallback={<div>Loading...</div>}>
                     <CytoscapeComponent name="code" code={code} grid={gridRef.current || undefined} />
                 </Suspense>
             </GridStackElement>
 
-            <GridStackElement x={0} y={2} w={12} min_w={3}>
+            {/* Row 6-7 */}
+            <GridStackElement x={0} y={6} w={12} h={2} min_w={3} min_h={2}>
+                <div style={{ height: '100%', overflow: 'hidden' }}>
+                    <VariablesView 
+                        variables={matchState.variables || []} 
+                        previousVariables={matchState.previousVariables || []}
+                    />
+                </div>
+            </GridStackElement>
+
+            {/* Row 8 */}
+            <GridStackElement x={0} y={8} w={12} min_w={3}>
                 <Suspense fallback={<div>Loading...</div>}>
                     <MatchController />
                 </Suspense>

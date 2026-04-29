@@ -128,23 +128,23 @@ function generateCytoscapeGraph(data: CytoscapeGraphData) {
         nodeDimensionsIncludeLabels: true,
         animate: false,
         rankDir: "LR",
-        //nodeSep: 200,
-        //rankSep: 200,
+        nodeSep: 200,
+        rankSep: 200,
         avoidOverlap: true
     }
-    /*const lt = cy.layout(layout)
-    lt.run()*/
-    for(let node of cy.nodes()){
-        const eles = node.outgoers()
-        if(eles.length > 3){
-            const box = eles.boundingBox()
-            const boundedLayout: DagreLayoutOptions = {
-                ...layout,
-                boundingBox: box
-            }
-            eles.layout(boundedLayout).run()
-        }
-    }
+    const lt = cy.layout(layout)
+    lt.run()
+    // for(let node of cy.nodes()){
+    //     const eles = node.outgoers()
+    //     if(eles.length > 3){
+    //         const box = eles.boundingBox()
+    //         const boundedLayout: DagreLayoutOptions = {
+    //             ...layout,
+    //             boundingBox: box
+    //         }
+    //         eles.layout(boundedLayout).run()
+    //     }
+    // }
     return cy
 }
 
@@ -163,6 +163,7 @@ function generateCytoscapeTree(data: CytoscapeTreeData) {
 }
 
 function recursive_generation(node: CytoscapeTreeData, cy: cytoscape.Core) {
+    console.log(node)
     const new_elem = cy.add({
         group: 'nodes',
         data: {label: node.name.replace("Context", ""), id:node.id, merged: false},

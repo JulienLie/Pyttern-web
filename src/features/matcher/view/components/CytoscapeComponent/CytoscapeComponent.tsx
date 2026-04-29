@@ -26,6 +26,8 @@ const CytoscapeComponent: React.FC<CytoscapeComponentsProps> = ({name, code, gri
     const graphData = useAppSelector((state) => 
         name === "pattern" ? state.matcher.patternGraph : state.matcher.codeGraph
     );
+    const selectedNodeId = useAppSelector((state) => state.matcher.selectedNodeId);
+
     const follow_name = "follow_" + name;
     const cy_name = name + "-cy";
 
@@ -125,8 +127,10 @@ const CytoscapeComponent: React.FC<CytoscapeComponentsProps> = ({name, code, gri
 
         const new_cys = [];
         for (const element in graphData) {
+            console.log(graphData[element])
             const type: CytoscapeType = CytoscapeType[element as keyof typeof CytoscapeType];
-            const cy = generateCytoscape(type, graphData[element]);
+            const dataToGenerate = type === CytoscapeType.GRAPH ? graphData[element]["__main__"] : graphData[element]
+            const cy = generateCytoscape(type, dataToGenerate);
             new_cys.push({
                 cy,
                 label: element
@@ -159,6 +163,22 @@ const CytoscapeComponent: React.FC<CytoscapeComponentsProps> = ({name, code, gri
             }
         }
     }, [matchState, name, cys, matchState.prevMatchedNodes, matchState.matchedNodes]);
+
+    useEffect(() => {
+        if (selectedNodeId && selectedNodeId.type === name) {
+            for (const cy of cys) {
+                const cytoscape = cy.cy;
+                const node = cytoscape.nodes(`[id = "${selectedNodeId.id}"]`);
+                if (node.length > 0) {
+                    cytoscape.animate({
+                        center: { eles: node },
+                        duration: 500,
+                        zoom: 2
+                    });
+                }
+            }
+        }
+    }, [selectedNodeId, name, cys]);
 
     const changeGraph: ChangeEventHandler<HTMLSelectElement> = (event) => {
         for (const cy of cys) {

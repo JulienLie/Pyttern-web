@@ -11,6 +11,8 @@ export interface State {
     currentStack: string;
     previousStack: string;
     codePos: [number, number];
+    variables?: any;
+    previousVariables?: any;
 }
 
 export interface GraphData {
@@ -37,6 +39,8 @@ export interface FetchStepDataResult {
     currentStack: string;
     previousStack: string;
     codePos: [number, number];
+    variables?: any;
+    previousVariables?: any;
 }
 
 export interface MatcherState {
@@ -57,4 +61,5 @@ export interface MatcherState {
     patternGraph: GraphData | null;
     codeGraph: GraphData | null;
     isLoadingGraph: boolean;
+    selectedNodeId: { id: string, type: 'pattern' | 'code' } | null;
 }

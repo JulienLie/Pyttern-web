@@ -43,6 +43,8 @@ export async function fetchStepData(step: number): Promise<FetchStepDataResult> 
         currentStack: data.current_stack,
         previousStack: data.previous_stack,
         codePos,
+        variables: data.variables,
+        previousVariables: data.previous_variables,
     };
 }
 

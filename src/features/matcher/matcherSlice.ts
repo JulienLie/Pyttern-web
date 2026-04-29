@@ -9,6 +9,8 @@ const defaultMatchState: State = {
     currentStack: "",
     previousStack: "",
     codePos: [0, 0],
+    variables: [],
+    previousVariables: [],
 };
 
 const initialState: MatcherState = {
@@ -29,6 +31,7 @@ const initialState: MatcherState = {
     patternGraph: null,
     codeGraph: null,
     isLoadingGraph: false,
+    selectedNodeId: null,
 };
 
 // Create the slice
@@ -36,6 +39,9 @@ const matcherSlice = createSlice({
     name: 'matcher',
     initialState,
     reducers: {
+        setSelectedNodeId: (state, action: PayloadAction<{ id: string, type: 'pattern' | 'code' } | null>) => {
+            state.selectedNodeId = action.payload;
+        },
         // Set pattern code
         setPatternCode: (state, action: PayloadAction<string>) => {
             state.patternCode = action.payload;
@@ -89,7 +95,24 @@ const matcherSlice = createSlice({
         
         // Update step state from API
         updateStepState: (state, action: PayloadAction<State>) => {
-            state.matchState = action.payload;
+            // Take the previous variables from the state if the API doesn't provide them
+            // or if the API provides an empty set but the current state has one (which suggests the API isn't tracking them)
+            let previousVariables = action.payload.previousVariables;
+            
+            const isPayloadPrevEmpty = !previousVariables || 
+                (Array.isArray(previousVariables) && previousVariables.length === 0) ||
+                (typeof previousVariables === 'string' && (previousVariables === "[]" || previousVariables === ""));
+            
+            if (isPayloadPrevEmpty && state.matchState.variables && 
+                ((Array.isArray(state.matchState.variables) && state.matchState.variables.length > 0) ||
+                 (typeof state.matchState.variables === 'string' && state.matchState.variables.length > 2))) {
+                previousVariables = state.matchState.variables;
+            }
+            
+            state.matchState = {
+                ...action.payload,
+                previousVariables: previousVariables || []
+            };
         },
         
         // Reset matcher
@@ -155,6 +178,7 @@ export const {
     setPatternGraph,
     setCodeGraph,
     setIsLoadingGraph,
+    setSelectedNodeId,
 } = matcherSlice.actions;
 
 // Export reducer

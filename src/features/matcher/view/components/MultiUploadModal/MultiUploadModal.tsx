@@ -101,7 +101,7 @@ const MultiUploadModal: React.FC<MultiUploadModalProps> = ({ show, onHide }) => 
                             if (result.names) {
                                 setNames(prevNames => {
                                     const namesSet = new Set(prevNames);
-                                    result.names.forEach(name => namesSet.add(name));
+                                    result.names?.forEach(name => namesSet.add(name));
                                     return Array.from(namesSet);
                                 });
                             }

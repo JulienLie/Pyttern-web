@@ -125,11 +125,25 @@ const CytoscapeComponent: React.FC<CytoscapeComponentsProps> = ({name, code, gri
         const new_cys = [];
         for (const element in graphData) {
             const type: CytoscapeType = CytoscapeType[element as keyof typeof CytoscapeType];
-            const cy = generateCytoscape(type, graphData[element]);
-            new_cys.push({
-                cy,
-                label: element
-            });
+
+            if (type === CytoscapeType.GRAPH) {
+                // The GRAPH entry is a dict of named PDAs ({ "__main__": pda, <subpattern>: pda, ... }),
+                // one per (sub)pattern. Render each named PDA as its own selectable graph.
+                const pdas = graphData[element] as Record<string, any>;
+                for (const pdaName in pdas) {
+                    const cy = generateCytoscape(type, pdas[pdaName]);
+                    new_cys.push({
+                        cy,
+                        label: pdaName === "__main__" ? element : `${element}: ${pdaName}`
+                    });
+                }
+            } else {
+                const cy = generateCytoscape(type, graphData[element]);
+                new_cys.push({
+                    cy,
+                    label: element
+                });
+            }
         }
         setCys(new_cys);
     }, [graphData]);

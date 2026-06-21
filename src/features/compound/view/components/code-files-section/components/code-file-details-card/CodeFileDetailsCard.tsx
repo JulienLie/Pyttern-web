@@ -43,6 +43,7 @@ function CodeFileDetailsCard({
         });
         sessionStorage.setItem('matcher_preload', preloadData);
         window.open('/matcher', '_blank');
+        sessionStorage.removeItem('matcher_preload');
     };
 
     return (
